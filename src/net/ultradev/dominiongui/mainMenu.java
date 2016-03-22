@@ -1,6 +1,8 @@
 package net.ultradev.dominiongui;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,11 +12,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-public class mainMenu extends Application{
-	@Override
-	public void start(Stage primaryStage){
-		primaryStage.setTitle("Dominion");	
-		
+public class mainMenu {
+	
+	private static int menuButtonHeight = 300;
+	private static int menuButtonWeidth = 75;
+	
+	public static Scene getMainMenu(){
 		BorderPane root = new BorderPane();
 		
 		
@@ -27,24 +30,32 @@ public class mainMenu extends Application{
 		
 		Button playLocalBtn = new Button();
 		playLocalBtn.setText("Play local");
-		playLocalBtn.setPrefWidth(100);
+		playLocalBtn.setPrefSize(menuButtonHeight, menuButtonWeidth);
+		
+		
 		grid.add(playLocalBtn, 0, 0);
 		
 		Button playOnlineBtn = new Button();
 		playOnlineBtn.setText("Play Online");
-		playOnlineBtn.setPrefWidth(100);
+		playOnlineBtn.setPrefSize(menuButtonHeight, menuButtonWeidth);
 		grid.add(playOnlineBtn, 0, 1);
 		
 		Button optionsBtn = new Button();
 		optionsBtn.setText("Options");
-		optionsBtn.setPrefWidth(100);
+		optionsBtn.setPrefSize(menuButtonHeight, menuButtonWeidth);
 		grid.add(optionsBtn, 0, 2);
 		
 		root.setCenter(grid);
 				
 		Button exitBtn = new Button();
-		exitBtn.setPrefWidth(100);
+		
+		exitBtn.setPrefSize(200, 50);
 		exitBtn.setText("Exit");
+		exitBtn.setOnAction(new EventHandler<ActionEvent>(){
+			public void handle(ActionEvent e){
+				System.exit(0); //TODO Afsluiten verbeteren
+			}
+		});
 		
 		HBox bottomBox = new HBox();
 		bottomBox.getChildren().add(exitBtn);
@@ -57,9 +68,11 @@ public class mainMenu extends Application{
 		Scene scene = new Scene(root,600,500);
 		root.prefHeight(scene.getHeight());
 		root.prefWidth(scene.getWidth());
-		primaryStage.setScene(scene);
 		scene.getStylesheets().add(DominionMainGUI.class.getResource("GUIStyle.css").toExternalForm());
+		return scene;
 		
-		primaryStage.show();	
+		
 	}
+	
+	
 }
