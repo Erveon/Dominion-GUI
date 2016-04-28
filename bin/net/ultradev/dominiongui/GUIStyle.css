@@ -1,0 +1,10 @@
+.root {
+     -fx-background-image: url("Images/background.jpg");
+     -fx-background-size: cover;
+}
+.button{
+	 -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, gray, white 50%, gray 100%) ;	 
+}
+.button:hover{
+	-fx-background-color:white;
+}
