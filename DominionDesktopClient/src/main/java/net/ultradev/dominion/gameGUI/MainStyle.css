@@ -1,0 +1,116 @@
+Button{
+	-fx-background-color: linear-gradient(from 0% 0% to 0% 100%, gray, white 50%, gray 100%);
+}
+Text{
+	-fx-font: 20 RobotoBold;
+}
+
+#Menu,#center{
+	-fx-background-image:url("file:Images/background.jpg");
+	-fx-background-repeat:no-repeat;
+	-fx-background-size:cover;
+}
+#Game{
+	-fx-background-color:white;
+}
+
+#GameMenu, #hand{
+	-fx-background-color: rgb(192,57,43);
+}
+
+#Title{
+	-fx-font-weight: bold;
+	-fx-fill: white;
+	-fx-font-size: 30;
+}
+#label{
+	-fx-fill: white;
+	-fx-font-weight: bold;
+}
+#count{
+	-fx-font-size: 21;
+	-fx-fill:#f1c40f;
+}
+#kingdomCard{
+	-fx-background-color: rgb(127,141,140);
+}
+
+#valueCard, #countCard,#deckCount{
+	-fx-font-size:22;
+	-fx-font-weight:bold;
+}
+#cardtitle,#discard Text{
+	-fx-font-size:15;
+	-fx-fill:white;
+	-fx-font-weight:bold;
+}
+#valueCard{
+	-fx-fill:rgb(241,196,15);
+}
+
+#countCard{
+	-fx-fill:rgb(231,76,60);
+}
+#deck, #discard{
+	-fx-background-color: rgb(41,128,185);
+}
+#deckCount{
+	-fx-fill:white;
+}
+#treasure{
+	-fx-background-color:rgb(241,196,15);
+}
+
+#treasure  #valueCard{
+	-fx-fill:white;
+}
+#curse{
+	-fx-background-color: rgb(142, 68, 173);
+}
+#victory{
+	-fx-background-color:rgb(39,174, 96);
+}
+#discard Text,#playerTitle Text{
+	-fx-fill:white;
+	-fx-font-weight: bold;
+}
+#action{
+	-fx-background-color:rgb(127, 140, 141);
+
+}
+
+
+#playerbalk{
+	-fx-background-color:rgb(192,57,43);
+}
+#playerbalk Text{
+	-fx-fill:white;
+	-fx-font-size: 15;
+}
+#currentState Text{
+	-fx-fill:#f1c40f;
+}
+#gameButton{
+	-fx-background-color:rgb(192,57,43);
+	-fx-text-fill:white;
+	-fx-font-weight:bold;
+}
+#BottomCard #cardtitle,#BottomCard #valueCard{
+	-fx-font-size:15;
+}
+
+#description{
+	-fx-background-color:rgb(96, 125, 139);
+}
+#CarouselButton{
+	-fx-fill: rgb(96, 125, 139);
+}
+#CarouselButton:hover{
+	-fx-fill: yellow;
+}
+#PlayerReady {
+	-fx-font-size:50;
+	-fx-fill:white;
+}
+
+
