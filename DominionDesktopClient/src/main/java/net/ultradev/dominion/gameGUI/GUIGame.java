@@ -7,7 +7,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
-import net.ultradev.dominion.GameTopMenu;
 import net.ultradev.dominion.game.Turn;
 import net.ultradev.dominion.game.local.LocalGame;
 import net.ultradev.dominion.game.player.Player;
@@ -18,7 +17,7 @@ public class GUIGame {
 	private ArrayList<miniCard> cardsPlayed;
 	private PlayZone playzone;
 	private Hand hand;
-
+	private GameTopMenu topMenu;
 
 	private GUtils utils = new GUtils();
 
@@ -48,13 +47,16 @@ public class GUIGame {
 	public Turn getTurn(){
 		return turn;
 	}
+	public GameTopMenu getTopMenu(){
+		return topMenu;
+	}
 
 
 	private void createGameGUI(){
 		root = new BorderPane();
 		root.setId("Game");
 		root.setPrefWidth(1280);
-		GameTopMenu topMenu = new GameTopMenu(turn);
+		topMenu = new GameTopMenu(turn);
 
 		root.setTop(topMenu.getMenu());
 		HBox center = new HBox();

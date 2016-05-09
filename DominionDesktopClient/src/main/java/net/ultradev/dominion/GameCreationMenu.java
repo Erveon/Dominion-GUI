@@ -51,7 +51,7 @@ public class GameCreationMenu {
             public void handle(ActionEvent event) {
 
             	GameServer gs = new GameServer();
-                gs.getUtils().setDebugging(false);
+            	gs.getUtils().setDebugging(false);
                 LocalGame localGame = gs.getGameManager().createGame(null);
 
                 for(int i=0;i<4;i++){
@@ -60,6 +60,7 @@ public class GameCreationMenu {
                 		localGame.addPlayer(listInput[i].getText());
                 	}
                 }
+
                 localGame.start();
 
                 PlayerConfirm pc = new PlayerConfirm(localGame,true);

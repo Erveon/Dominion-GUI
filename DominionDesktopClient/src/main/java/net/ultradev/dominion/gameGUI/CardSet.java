@@ -79,14 +79,15 @@ public class CardSet {
 		TilePane row = new TilePane();
 		row.setPrefColumns(5);
 		row.setHgap(10);
+
 		JSONArray treasure =  board.getAsJson().getJSONArray("treasure");
 
+		JSONArray curse = board.getAsJson().getJSONArray("curse");
 
-
-		VBox card1 = createCard("Curse","curse","0","0");
+		VBox card1 = createCard("Curse","curse",getSupply(curse,"curse").getString("cost"),getSupply(curse,"curse").getString("amount"));
 		VBox card2 = createCard("copper","treasure",getSupply(treasure,"copper").getString("cost"),getSupply(treasure,"copper").getString("amount"));
-		VBox card3 = createCard("silver","treasure",getSupply(treasure,"copper").getString("cost"),getSupply(treasure,"silver").getString("amount"));
-		VBox card4 = createCard("gold","treasure",getSupply(treasure,"copper").getString("cost"),getSupply(treasure,"gold").getString("amount"));
+		VBox card3 = createCard("silver","treasure",getSupply(treasure,"silver").getString("cost"),getSupply(treasure,"silver").getString("amount"));
+		VBox card4 = createCard("gold","treasure",getSupply(treasure,"gold").getString("cost"),getSupply(treasure,"gold").getString("amount"));
 		VBox card5 = new VBox();
 		card5.setId("discard");
 		card5.setAlignment(Pos.CENTER);
@@ -166,8 +167,10 @@ public class CardSet {
 		JSONObject obj = new JSONObject();
 		for(int i =0; i<lijst.size();i++){
 			String name = lijst.getJSONObject(i).getString("name");
-			if(name.equals(name)){
-				obj = lijst.getJSONObject(i);		}
+			if(name.equals(naam)){
+				obj = lijst.getJSONObject(i);
+
+				}
 
 		}
 		return obj;

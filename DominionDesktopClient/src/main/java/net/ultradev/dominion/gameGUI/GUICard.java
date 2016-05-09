@@ -13,7 +13,7 @@ import javafx.scene.text.TextAlignment;
 import net.ultradev.dominion.game.card.Card;
 
 public class GUICard {
-	private VBox card;
+	private VBox cardBox;
 	private String cardDesription;
 	private String type;
 	private String title;
@@ -23,7 +23,9 @@ public class GUICard {
 
 
 
+
 	public GUICard(Card card, Hand parent){
+
 		this.parent = parent;
 		type = setType(card.getDescription());
 		this.title = card.getName();
@@ -35,7 +37,7 @@ public class GUICard {
 	}
 
 	public VBox getCard(){
-		return card;
+		return cardBox;
 	}
 
 	public String getType(){
@@ -62,12 +64,12 @@ public class GUICard {
 	private void createCard(){
 		int width = 220;
 		int height = 160;
-		card = createVBox(type,width);
+		cardBox = createVBox(type,width);
 		VBox titleBox = createTitle(title,30);
 		ImageView iv = createImg(img,width,height);
 		VBox description = createDescription(title);
 		HBox bottom = createBottomCard(title);
-		card.getChildren().addAll(titleBox,iv,description,bottom);
+		cardBox.getChildren().addAll(titleBox,iv,description,bottom);
 
 		this.getCard().setOnMouseClicked(new EventHandler<MouseEvent>() {
 		  @Override
@@ -156,13 +158,17 @@ public class GUICard {
 	}
 
 	public void playCard(){
+		//Kaart spelen
+		parent.getParent().getTurn().playCard(title);
+
 		parent.getCards().remove(this);
     	parent.getCarousel().setCarousel(parent.getHand(), parent.getCards());
     	parent.getParent().getListCardsPlayed().add(new miniCard(title,type));
     	parent.getParent().getPlayZone().getCarousel().setCarouselMini(parent.getParent().getPlayZone().getPlayZone(), parent.getParent().getListCardsPlayed());
 
-    	//TEST om buycounters en actioncounters te veranderen
 
+
+    	parent.getParent().getTopMenu().reloadCounters();
 
 	}
 
