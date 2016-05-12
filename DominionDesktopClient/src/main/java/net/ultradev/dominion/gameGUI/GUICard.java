@@ -10,6 +10,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import net.sf.json.JSON;
 import net.ultradev.dominion.game.card.Card;
 
 public class GUICard {
@@ -21,14 +22,15 @@ public class GUICard {
 	private Image img;
 	private Hand parent;
 
+	private GUtils utils = new GUtils();
 
 
 
 	public GUICard(Card card, Hand parent){
 
 		this.parent = parent;
-		type = setType(card.getDescription());
 		this.title = card.getName();
+		type = utils.setType(card.getName(),card.getDescription());
 		this.cardDesription = card.getDescription();
 		this.cost = card.getCost();
 		this.img = new Image("File:Images/copper.jpg");
@@ -52,14 +54,7 @@ public class GUICard {
 		return title;
 	}
 
-	private String setType(String description){
-		if(description.toLowerCase().contains("coin")){
-			return "treasure";
-		}else if(description.toLowerCase().contains("victory")){
-			return "victory";
-		}
-		return "action";
-	}
+
 
 	private void createCard(){
 		int width = 220;
@@ -159,17 +154,14 @@ public class GUICard {
 
 	public void playCard(){
 		//Kaart spelen
-		parent.getParent().getTurn().playCard(title);
-
-		parent.getCards().remove(this);
-    	parent.getCarousel().setCarousel(parent.getHand(), parent.getCards());
-    	parent.getParent().getListCardsPlayed().add(new miniCard(title,type));
-    	parent.getParent().getPlayZone().getCarousel().setCarouselMini(parent.getParent().getPlayZone().getPlayZone(), parent.getParent().getListCardsPlayed());
-
-
-
-    	parent.getParent().getTopMenu().reloadCounters();
-
+		String response = parent.getParent().getTurn().playCard(title).getString("response");
+		//System.out.println(parent.getParent().getTurn().getPlayer().getHand());
+		if(!response.equals("invalid")){
+			parent.getCards().remove(this);
+			parent.reloadCards(false);
+			parent.getParent().getTopMenu().reloadCounters();
+			parent.getParent().loadCardsPlayed();
+		}
 	}
 
 

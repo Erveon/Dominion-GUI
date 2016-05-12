@@ -60,7 +60,7 @@ public class GameCreationMenu {
                 		localGame.addPlayer(listInput[i].getText());
                 	}
                 }
-
+                localGame.getConfig().setCardset("test");
                 localGame.start();
 
                 PlayerConfirm pc = new PlayerConfirm(localGame,true);

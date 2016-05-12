@@ -13,9 +13,10 @@ public class GameTopMenu {
 	private Text actionCounterText;
 	private Text buyCounterText;
 	private Text coinsText;
+	private GUIGame parent;
 
-
-	public GameTopMenu(Turn turn){
+	public GameTopMenu(Turn turn, GUIGame parent){
+		this.parent = parent;
 		this.turn = turn;
 		loadCounterText();
 		createMenu();
@@ -36,6 +37,12 @@ public class GameTopMenu {
 		actionCounterText.setText(Integer.toString(turn.getActions()));
 		coinsText.setText(Integer.toString(turn.getBuypower()));
 		buyCounterText.setText(Integer.toString(turn.getBuys()));
+
+		if(turn.getActions() == 0 ){
+			parent.getPlayerbalk().setOnTreasurePhase();
+
+		}
+
 	}
 
 	private void createMenu(){
@@ -82,7 +89,7 @@ public class GameTopMenu {
 
 		VBox actionCounter = createCounter("ACTION",actionCounterText);
 		VBox buyCounter = createCounter("BUYS",buyCounterText);
-		VBox coinCounter = createCounter("COINS",coinsText);
+		VBox coinCounter = createCounter("GOLD",coinsText);
 
 		counterBox.getChildren().addAll(actionCounter,buyCounter,coinCounter);
 		return counterBox;
@@ -103,10 +110,11 @@ public class GameTopMenu {
 	}
 
 	private void loadCounterText(){
-		System.out.println(turn.getBuypower());
 		actionCounterText = createText(turn.getActions());
 		buyCounterText = createText(turn.getBuys());
 		coinsText = createText(turn.getBuypower());
+
+
 	}
 	private Text createText(int number){
 		Text text = new Text();

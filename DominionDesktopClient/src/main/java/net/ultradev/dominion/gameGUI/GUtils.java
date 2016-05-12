@@ -37,6 +37,15 @@ public class GUtils {
 		return hbox;
 	}
 
+	public String setType(String title,String description){
+		if(title.toLowerCase().equals("copper")||title.toLowerCase().equals("silver")||title.toLowerCase().equals("gold")){
+			return "treasure";
+		}else if(description.toLowerCase().contains("victory")){
+			return "victory";
+		}
+		return "action";
+	}
+
 }
 
 

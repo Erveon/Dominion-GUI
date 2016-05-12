@@ -14,15 +14,15 @@ import net.ultradev.dominion.game.card.Card;
 
 public class Hand {
 	private HBox hand;
-	private List<Card> listCardsInHand;
+
 	private ArrayList<GUICard> cards;
 	private Carousel c ;
 	private GUIGame parent;
 
 	private GUtils utils = new GUtils();
 
-	public Hand(List<Card> listCardsInHand, GUIGame parent){
-		this.listCardsInHand = listCardsInHand;
+	public Hand( GUIGame parent){
+		;
 		this.parent = parent;
 		createHand();
 	}
@@ -42,6 +42,30 @@ public class Hand {
 	public Carousel getCarousel(){
 		return c;
 	}
+	private void loadCards(){
+		List<Card> listCardsInHand = parent.getTurn().getPlayer().getHand();
+		for(int i=0;i<listCardsInHand.size();i++){
+			GUICard card = new GUICard(listCardsInHand.get(i),this);
+			cards.add(card);
+		}
+		c = new Carousel();
+		c.setCarousel(this.getHand(), this.getCards());
+
+	}
+
+	public void reloadCards(boolean fullReload){
+		if(fullReload){
+			getCards().clear();
+		}
+		if(getCards().size() < parent.getTurn().getPlayer().getHand().size())
+		{	//TODO TESTEN
+			for(int i = getCards().size(); i <  parent.getTurn().getPlayer().getHand().size();i++){
+				GUICard card = new GUICard(parent.getTurn().getPlayer().getHand().get(i),this);
+				cards.add(card);
+			}
+		}
+		c.setCarousel(this.getHand(), this.getCards());
+	}
 
 	private void createHand(){
 		hand = utils.createCenterHBox("hand");
@@ -55,17 +79,10 @@ public class Hand {
 
 
 
-		c = new Carousel();
-		c.setCarousel(this.getHand(), this.getCards());
+
 	}
 
-	public void loadCards(){
-		getCards().clear();
-		for(int i=0;i<listCardsInHand.size();i++){
-			GUICard card = new GUICard(listCardsInHand.get(i),this);
-			cards.add(card);
-		}
-	}
+
 
 
 

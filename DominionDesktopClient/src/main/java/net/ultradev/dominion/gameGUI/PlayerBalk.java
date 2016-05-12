@@ -24,9 +24,10 @@ public class PlayerBalk {
 	private Turn turn;
 	private Circle[] circlePhases;
 	private GUIGame parent;
-
+	private Button nextPhase;
 
 	public PlayerBalk(Turn currentTurn, GUIGame parent){
+
 		this.players = currentTurn.getGame().getPlayers();
 		this.currentPlayer = currentTurn.getPlayer();
 		turn = currentTurn;
@@ -36,6 +37,19 @@ public class PlayerBalk {
 
 	public HBox getPlayerBalk(){
 		return playerBalk;
+	}
+
+
+
+	public void setOnTreasurePhase(){
+		changePhase(0,"CLEAN-UP PHASE");
+	}
+
+	private void changePhase(int index, String text){
+		turn.endPhase();
+		circlePhases[index].setFill(Color.rgb(236, 240, 241));
+		circlePhases[index+1].setFill(Color.rgb(241, 196, 15));
+		nextPhase.setText(text);
 	}
 
 	private void createPlayerBalk(){
@@ -59,31 +73,33 @@ public class PlayerBalk {
 		right.setMinWidth(width);
 
 
-		Button nextPhase = createButton("PLAY TREASURE");
+		nextPhase = createButton("TREASURE PHASE");
 		nextPhase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-            	circlePhases[0].setFill(Color.rgb(236, 240, 241));
-            	circlePhases[1].setFill(Color.rgb(241, 196, 15));
 
+
+            	switch(parent.getTurn().getPhase().toString()){
+            		case "ACTION":
+            				setOnTreasurePhase();
+            			break;
+            		case "BUY":
+            			changePhase(1,"END TURN");
+                    	parent.getHand().reloadCards(true);
+                    	parent.loadCardsPlayed();
+                    	parent.getCardSet().loadRows();
+                    	break;
+            		default:
+
+                    	PlayerConfirm playerConfirm = new PlayerConfirm(turn.getGame(),false);
+                    	DominionGUIMain.setRoot(playerConfirm.getRoot());
+                    	break;
+            	}
             }
         });
-		Button endTurn = createButton("END TURN");
-		endTurn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-            	circlePhases[1].setFill(Color.rgb(236, 240, 241));
-            	circlePhases[2].setFill(Color.rgb(241, 196, 15));
-            	turn.end();
 
 
-            	PlayerConfirm playerConfirm = new PlayerConfirm(turn.getGame(),false);
-            	DominionGUIMain.setRoot(playerConfirm.getRoot());
-
-            }
-        });
-
-		right.getChildren().addAll(nextPhase,endTurn);
+		right.getChildren().addAll(nextPhase);
 		playerBalk.getChildren().addAll(left,right);
 	}
 
