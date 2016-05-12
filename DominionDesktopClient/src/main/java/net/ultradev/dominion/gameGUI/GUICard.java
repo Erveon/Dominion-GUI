@@ -1,16 +1,18 @@
 package net.ultradev.dominion.gameGUI;
 
+
+
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
+
 import javafx.scene.image.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import net.sf.json.JSON;
+
 import net.ultradev.dominion.game.card.Card;
 
 public class GUICard {
@@ -30,7 +32,7 @@ public class GUICard {
 
 		this.parent = parent;
 		this.title = card.getName();
-		type = utils.setType(card.getName(),card.getDescription());
+		type = card.getType().toString().toLowerCase();
 		this.cardDesription = card.getDescription();
 		this.cost = card.getCost();
 		this.img = new Image("File:Images/copper.jpg");
@@ -70,7 +72,13 @@ public class GUICard {
 		  @Override
 		    public void handle(MouseEvent mouseEvent) {
 		        if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-		        	playCard();
+		        	if(checkActive()){
+		        		playCard();
+		        	}
+		        	else{
+		        		selectCard();
+		        	}
+
 		        }
 		    }
 		});
@@ -150,6 +158,31 @@ public class GUICard {
 
 		hbox.getChildren().addAll(boxValue,boxType);
 		return hbox;
+	}
+
+	private boolean checkActive(){
+		if(parent.getActiveGCard() != null){
+
+			return parent.getActiveGCard().equals(this);
+		}
+
+		return false;
+
+	}
+
+	private void selectCard(){
+		parent.setActiveGCard(this);
+		cardBox.setStyle("-fx-border-color: white; -fx-border-width: 4");
+		for(int i = 0; i< parent.getCards().size();i++){
+			if(!parent.getCards().get(i).equals(this)){
+				parent.getCards().get(i).getCard().setStyle("-fx-border: none");
+			}
+		}
+		if(!parent.getParent().getTurn().canPlay(parent.getParent().getTurn().getPhase(), title)){
+			parent.getParent().getPlayerbalk().getPlayButtonText().setStyle("-fx-background-color:gray");
+		}else{
+			parent.getParent().getPlayerbalk().getPlayButtonText().setStyle("-fx-background-color:rgb(192,57,43);");
+		}
 	}
 
 	public void playCard(){

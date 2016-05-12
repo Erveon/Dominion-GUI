@@ -65,9 +65,8 @@ public class GUIGame {
 		cardsPlayed.clear();
 		List<JSONObject> JSONCardsPlayed = turn.getGame().getBoard().getPlayedCards();
 		for(int i = 0; i< JSONCardsPlayed.size(); i++){
-			JSONObject jObj = JSONCardsPlayed.get(i);
-			String type = utils.setType(jObj.getString("name"), jObj.getString("description"));
-			miniCard m = new miniCard(jObj.getString("name"), type);
+			JSONObject card = JSONCardsPlayed.get(i);
+			miniCard m = new miniCard(card);
 			getListCardsPlayed().add(m);
 		}
 		getPlayZone().getCarousel().setCarouselMini(getPlayZone().getPlayZone(),getListCardsPlayed());

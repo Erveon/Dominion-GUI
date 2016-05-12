@@ -89,13 +89,12 @@ public class CardSet {
 		row.setHgap(10);
 
 		JSONArray treasure =  board.getAsJson().getJSONArray("treasure");
+		JSONObject curse = board.getAsJson().getJSONArray("curse").getJSONObject(0);
 
-		JSONArray curse = board.getAsJson().getJSONArray("curse");
-
-		VBox card1 = createCard("Curse","curse",getSupply(curse,"curse").getString("cost"),getSupply(curse,"curse").getString("amount"));
-		VBox card2 = createCard("copper","treasure",getSupply(treasure,"copper").getString("cost"),getSupply(treasure,"copper").getString("amount"));
-		VBox card3 = createCard("silver","treasure",getSupply(treasure,"silver").getString("cost"),getSupply(treasure,"silver").getString("amount"));
-		VBox card4 = createCard("gold","treasure",getSupply(treasure,"gold").getString("cost"),getSupply(treasure,"gold").getString("amount"));
+		VBox card1 = createCard("Curse","curse",curse.getString("cost"),curse.getString("amount"));
+		VBox card2 = createCard("copper","treasure",treasure.getJSONObject(0).getString("cost"),treasure.getJSONObject(0).getString("amount"));
+		VBox card3 = createCard("silver","treasure",treasure.getJSONObject(1).getString("cost"),treasure.getJSONObject(1).getString("amount"));
+		VBox card4 = createCard("gold","treasure",treasure.getJSONObject(2).getString("cost"),treasure.getJSONObject(2).getString("amount"));
 		VBox card5 = new VBox();
 		card5.setId("discard");
 		card5.setAlignment(Pos.CENTER);
@@ -115,10 +114,10 @@ public class CardSet {
 
 		JSONArray victory =  board.getAsJson().getJSONArray("victory");
 
-		VBox trash = createDeckType("trash",0);
-		VBox card2 = createCard("estate","victory",getSupply(victory,"estate").getString("cost"),getSupply(victory,"estate").getString("amount"));
-		VBox card3 = createCard("duchy","victory",getSupply(victory,"duchy").getString("cost"),getSupply(victory,"duchy").getString("amount"));
-		VBox card4 = createCard("province","victory",getSupply(victory,"province").getString("cost"),getSupply(victory,"province").getString("amount"));
+		VBox trash = createDeckType("trash",board.getAsJson().getJSONArray("trash").size());
+		VBox card2 = createCard("estate","victory",victory.getJSONObject(0).getString("cost"),victory.getJSONObject(0).getString("amount"));
+		VBox card3 = createCard("duchy","victory",victory.getJSONObject(1).getString("cost"),victory.getJSONObject(1).getString("amount"));
+		VBox card4 = createCard("province","victory",victory.getJSONObject(2).getString("cost"),victory.getJSONObject(2).getString("amount"));
 		VBox deck = createDeckType("Deck",turn.getPlayer().getDeck().size());
 		row.getChildren().addAll(trash,card2,card3,card4,deck);
 		vbox.getChildren().add(row);
@@ -184,18 +183,6 @@ public class CardSet {
 		cardinfo.getChildren().add(countCard);
 		vbox.getChildren().addAll(cardtitle,cardinfo);
 		return vbox;
-	}
-
-	private JSONObject getSupply(JSONArray lijst,String naam){
-		JSONObject obj = new JSONObject();
-		for(int i =0; i<lijst.size();i++){
-			String name = lijst.getJSONObject(i).getString("name");
-			if(name.equals(naam)){
-				obj = lijst.getJSONObject(i);
-				}
-
-		}
-		return obj;
 	}
 
 	private void buyCard(String title){

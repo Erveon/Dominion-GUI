@@ -18,6 +18,7 @@ public class Hand {
 	private ArrayList<GUICard> cards;
 	private Carousel c ;
 	private GUIGame parent;
+	private GUICard activeGCard;
 
 	private GUtils utils = new GUtils();
 
@@ -37,6 +38,13 @@ public class Hand {
 
 	public ArrayList<GUICard>  getCards(){
 		return cards;
+	}
+
+	public void setActiveGCard(GUICard card){
+		activeGCard = card;
+	}
+	public GUICard getActiveGCard(){
+		return activeGCard;
 	}
 
 	public Carousel getCarousel(){

@@ -40,7 +40,6 @@ public class GameTopMenu {
 
 		if(turn.getActions() == 0 ){
 			parent.getPlayerbalk().setOnTreasurePhase();
-
 		}
 
 	}

@@ -24,7 +24,9 @@ public class PlayerBalk {
 	private Turn turn;
 	private Circle[] circlePhases;
 	private GUIGame parent;
+
 	private Button nextPhase;
+	private Button playButton;
 
 	public PlayerBalk(Turn currentTurn, GUIGame parent){
 
@@ -39,14 +41,16 @@ public class PlayerBalk {
 		return playerBalk;
 	}
 
-
+	public Button getPlayButtonText(){
+		return playButton;
+	}
 
 	public void setOnTreasurePhase(){
 		changePhase(0,"CLEAN-UP PHASE");
 	}
 
 	private void changePhase(int index, String text){
-		turn.endPhase();
+
 		circlePhases[index].setFill(Color.rgb(236, 240, 241));
 		circlePhases[index+1].setFill(Color.rgb(241, 196, 15));
 		nextPhase.setText(text);
@@ -72,34 +76,46 @@ public class PlayerBalk {
 		right.setMaxWidth(width);
 		right.setMinWidth(width);
 
-
+		playButton = createButton("PLAY CARD");
+		playButton.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event){
+				parent.getHand().getActiveGCard().playCard();
+			}
+		});
 		nextPhase = createButton("TREASURE PHASE");
 		nextPhase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
 
-
             	switch(parent.getTurn().getPhase().toString()){
             		case "ACTION":
-            				setOnTreasurePhase();
+            			turn.endPhase();
+            			setOnTreasurePhase();
             			break;
             		case "BUY":
+            			turn.endPhase();
             			changePhase(1,"END TURN");
                     	parent.getHand().reloadCards(true);
                     	parent.loadCardsPlayed();
                     	parent.getCardSet().loadRows();
                     	break;
             		default:
-
                     	PlayerConfirm playerConfirm = new PlayerConfirm(turn.getGame(),false);
                     	DominionGUIMain.setRoot(playerConfirm.getRoot());
                     	break;
             	}
+
+            	if(!parent.getTurn().canPlay(parent.getTurn().getPhase(), parent.getHand().getActiveGCard().getTitle())){
+        			parent.getPlayerbalk().getPlayButtonText().setStyle("-fx-background-color:gray");
+        		}else{
+        			parent.getPlayerbalk().getPlayButtonText().setStyle("-fx-background-color:rgb(192,57,43);");
+        		}
             }
         });
 
 
-		right.getChildren().addAll(nextPhase);
+		right.getChildren().addAll(playButton,nextPhase);
 		playerBalk.getChildren().addAll(left,right);
 	}
 

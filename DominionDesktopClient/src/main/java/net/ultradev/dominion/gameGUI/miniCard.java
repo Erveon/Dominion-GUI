@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import net.sf.json.JSONObject;
 import net.ultradev.dominion.game.card.Card;
 
 public class miniCard {
@@ -20,11 +21,13 @@ public class miniCard {
 
 	private Image img;
 
+	//TMP
+	private GUtils utils = new GUtils();
 
+	public miniCard(JSONObject card){
+		this.title = card.getString("name");
 
-	public miniCard(String title, String type){
-		this.title = title;
-		this.type = type;
+		this.type = utils.setType(title, card.getString("description"));
 		this.img = new Image("File:Images/copper.jpg");
 		createMiniCard();
 
