@@ -20,10 +20,10 @@ public class Hand {
 	private GUIGame parent;
 	private GUICard activeGCard;
 
+	private Card lastCardPlayed;
 	private GUtils utils = new GUtils();
 
 	public Hand( GUIGame parent){
-		;
 		this.parent = parent;
 		createHand();
 	}
@@ -40,8 +40,23 @@ public class Hand {
 		return cards;
 	}
 
+	public void setLastCardPlayed(Card card){
+		lastCardPlayed = card;
+	}
+
+	public Card getLastPlayedCard(){
+		return lastCardPlayed;
+	}
+
 	public void setActiveGCard(GUICard card){
 		activeGCard = card;
+		activeGCard.getCard().setStyle("-fx-border-color: white; -fx-border-width: 4");
+		for(int i = 0; i< getCards().size();i++){
+			if(!getCards().get(i).equals(activeGCard)){
+				getCards().get(i).getCard().setStyle("-fx-border: none");
+			}
+		}
+		getParent().getPlayerbalk().getPlayButton().setActive(getParent().getTurn().canPlay(getParent().getTurn().getPhase(), activeGCard.getTitle()));
 	}
 	public GUICard getActiveGCard(){
 		return activeGCard;
@@ -50,8 +65,10 @@ public class Hand {
 	public Carousel getCarousel(){
 		return c;
 	}
+
 	private void loadCards(){
 		List<Card> listCardsInHand = parent.getTurn().getPlayer().getHand();
+
 		for(int i=0;i<listCardsInHand.size();i++){
 			GUICard card = new GUICard(listCardsInHand.get(i),this);
 			cards.add(card);

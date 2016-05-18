@@ -15,19 +15,23 @@ import net.sf.json.JSONObject;
 import net.ultradev.dominion.game.card.Card;
 
 public class miniCard {
+
+	private JSONObject Jcard;
+	private GUIGame parent;
+
 	private VBox card;
 	private String type;
 	private String title;
-
 	private Image img;
 
 	//TMP
 	private GUtils utils = new GUtils();
 
-	public miniCard(JSONObject card){
+	public miniCard(JSONObject card, GUIGame parent){
+		this.parent = parent;
+		Jcard = card;
 		this.title = card.getString("name");
-
-		this.type = utils.setType(title, card.getString("description"));
+		this.type = card.getString("type").toLowerCase();
 		this.img = new Image("File:Images/copper.jpg");
 		createMiniCard();
 
@@ -46,6 +50,13 @@ public class miniCard {
 		VBox titleBox = createTitle(50);
 		ImageView iv = createImg(img,width,height);
 		card.getChildren().addAll(titleBox,iv);
+		card.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent mouseEvent){
+				VBox newCard = new GUICard(Jcard).getCard();
+				parent.getCardViewer().setRoot(newCard);
+			}
+		});
 
 
 	}

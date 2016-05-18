@@ -1,11 +1,11 @@
 package net.ultradev.dominion.gameGUI;
 
-import javafx.event.EventHandler;
+import java.util.ArrayList;
+
 import javafx.geometry.*;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import net.sf.json.*;
 import net.ultradev.dominion.game.*;
 
@@ -13,22 +13,59 @@ public class CardSet {
 	private VBox cardset;
 	private Board board;
 	private Turn turn;
-	private GUIGame parent;
+	private GUIGame guiGame;
 	private VBox rowContainer;
 
-	//TIJDELIjk
-	private VBox[] kingdomCards;
 
-	public CardSet(Turn turn,GUIGame parent ){
-		this.turn = turn;
+
+	private ArrayList<KingdomCard>  kingdomCards;
+
+	private KingdomCard selectedKingdomCard;
+
+	public CardSet(GUIGame parent ){
+		this.turn = parent.getTurn();
 		this.board = turn.getGame().getBoard();
-		this.parent = parent;
-
+		this.guiGame = parent;
+		kingdomCards = new ArrayList<KingdomCard>();
 		cardset = createCardSets();
+
 	}
 
 	public VBox getCardset(){
 		return cardset;
+	}
+
+	public GUIGame getGUIGame(){
+		return guiGame;
+	}
+	public Board getBoard(){
+		return board;
+	}
+	public KingdomCard getSelectedKingdomCard(){
+		return selectedKingdomCard;
+	}
+
+	public void setBorder(){
+		try{
+		if(selectedKingdomCard.getCost() > turn.getBuypower()){
+			selectedKingdomCard.getCard().setStyle("-fx-border-color: red; -fx-border-width: 4");
+		}else{
+			selectedKingdomCard.getCard().setStyle("-fx-border-color: white; -fx-border-width: 4");
+		}
+		for(int i = 0; i< kingdomCards.size();i++){
+			if(!kingdomCards.get(i).equals(selectedKingdomCard)){
+				kingdomCards.get(i).getCard().setStyle("-fx-border: none");
+			}
+		}}
+		catch(Exception e){
+
+		}
+	}
+
+	public void selectKingdomCard(KingdomCard selectedCard){
+		selectedKingdomCard =selectedCard;
+		setBorder();
+
 	}
 
 	public void loadRows(){
@@ -63,7 +100,7 @@ public class CardSet {
 		row.setPrefColumns(5);
 		row.setHgap(10);
 		for(int i=0; i<5; i++){
-			VBox card = kingdomCards[startindex + i];
+			VBox card = kingdomCards.get(startindex + i).getCard();
 			row.getChildren().add(card);
 		}
 		vbox.getChildren().add(row);
@@ -72,96 +109,51 @@ public class CardSet {
 	}
 
 	private void createkingdomCards(){
-		kingdomCards = new VBox[10];
+
 		JSONArray action = board.getAsJson().getJSONArray("action");
 		for(int i = 0; i<10; i++){
-			JSONObject actiecard = action.getJSONObject(i);
-			VBox vbox = createCard(actiecard.getString("name"),"action",actiecard.getString("cost"),actiecard.getString("amount"));
-			kingdomCards[i] = vbox;
+			JSONObject actionCard = action.getJSONObject(i);
+			kingdomCards.add(new KingdomCard(actionCard,"action",this));
 		}
 	}
 
 	private VBox createThirdRow(){
-		VBox vbox = new VBox();
-		vbox.setFillWidth(true);
-		TilePane row = new TilePane();
-		row.setPrefColumns(5);
-		row.setHgap(10);
 
 		JSONArray treasure =  board.getAsJson().getJSONArray("treasure");
 		JSONObject curse = board.getAsJson().getJSONArray("curse").getJSONObject(0);
+		KingdomCard kcard1 = new KingdomCard(curse, "curse", this);
+		kingdomCards.add(kcard1);
+		VBox card1 = kcard1.getCard();
 
-		VBox card1 = createCard("Curse","curse",curse.getString("cost"),curse.getString("amount"));
-		VBox card2 = createCard("copper","treasure",treasure.getJSONObject(0).getString("cost"),treasure.getJSONObject(0).getString("amount"));
-		VBox card3 = createCard("silver","treasure",treasure.getJSONObject(1).getString("cost"),treasure.getJSONObject(1).getString("amount"));
-		VBox card4 = createCard("gold","treasure",treasure.getJSONObject(2).getString("cost"),treasure.getJSONObject(2).getString("amount"));
-		VBox card5 = new VBox();
-		card5.setId("discard");
-		card5.setAlignment(Pos.CENTER);
-		Text discard = new Text();
-		discard.setText("DISCARD");
-		card5.getChildren().add(discard);
-		row.getChildren().addAll(card1,card2,card3,card4,card5);
-		vbox.getChildren().add(row);
-		return vbox;
+		VBox card5 = createDiscardCard();
+
+		VBox row = generateLastRows(card1,treasure,"treasure",card5);
+		return row;
 	}
 	private VBox createFourthRow(){
+		JSONArray victory =  board.getAsJson().getJSONArray("victory");
+
+		VBox trash = createDeckType("trash",board.getAsJson().getJSONArray("trash").size());
+		VBox deck = createDeckType("Deck",turn.getPlayer().getDeck().size());
+		VBox row = generateLastRows(trash,victory,"victory",deck);
+		return row;
+	}
+
+	private VBox generateLastRows(VBox card1, JSONArray middleCards, String type, VBox card5 ){
 		VBox vbox = new VBox();
 		vbox.setFillWidth(true);
 		TilePane row = new TilePane();
 		row.setPrefColumns(5);
 		row.setHgap(10);
-
-		JSONArray victory =  board.getAsJson().getJSONArray("victory");
-
-		VBox trash = createDeckType("trash",board.getAsJson().getJSONArray("trash").size());
-		VBox card2 = createCard("estate","victory",victory.getJSONObject(0).getString("cost"),victory.getJSONObject(0).getString("amount"));
-		VBox card3 = createCard("duchy","victory",victory.getJSONObject(1).getString("cost"),victory.getJSONObject(1).getString("amount"));
-		VBox card4 = createCard("province","victory",victory.getJSONObject(2).getString("cost"),victory.getJSONObject(2).getString("amount"));
-		VBox deck = createDeckType("Deck",turn.getPlayer().getDeck().size());
-		row.getChildren().addAll(trash,card2,card3,card4,deck);
+		row.getChildren().add(card1);
+		for(int i = 0; i<3;i++){
+			KingdomCard kcard = new KingdomCard(middleCards.getJSONObject(i),type,this);
+			VBox cardX = kcard.getCard();
+			kingdomCards.add(kcard);
+			row.getChildren().add(cardX);
+		}
+		row.getChildren().add(card5);
 		vbox.getChildren().add(row);
-		return vbox;
-	}
-
-
-	private VBox createCard(String title, String id,String value, String count){
-		VBox vbox = new VBox();
-		vbox.setPrefSize(220, 70);
-		vbox.setId(id);
-		vbox.setFillWidth(true);
-		vbox.setAlignment(Pos.TOP_CENTER);
-		vbox.setPadding(new Insets(5,0,0,0));
-
-		Text cardtitle = new Text();
-		cardtitle.setId("cardtitle");
-		cardtitle.setText(title.toUpperCase());
-
-		HBox cardinfo = new HBox();
-		cardinfo.setAlignment(Pos.CENTER);
-
-		Text valueCard = new Text();
-		valueCard.setId("valueCard");
-		valueCard.setText(value);
-
-		HBox spaceBetween = new HBox();
-		spaceBetween.setPrefWidth(150);
-		Text countCard = new Text();
-		countCard.setId("countCard");
-		countCard.setText((count));
-		cardinfo.getChildren().addAll(valueCard,spaceBetween,countCard);
-		vbox.getChildren().addAll(cardtitle,cardinfo);
-
-		vbox.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			  @Override
-			    public void handle(MouseEvent mouseEvent) {
-			        if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-			        	buyCard(title);
-			        	loadRows();
-			        }
-			    }
-			});
-
 		return vbox;
 	}
 
@@ -185,18 +177,18 @@ public class CardSet {
 		return vbox;
 	}
 
-	private void buyCard(String title){
-		try{
-
-		String response = turn.buyCard(title).getString("result");
-		if(response.equals("BOUGHT"))		{
-			createkingdomCards();
-			parent.getTopMenu().reloadCounters();
-
-		}}
-		catch(Exception e){
-		}
-
+	private VBox createDiscardCard(){
+		VBox vbox = new VBox();
+		vbox.setId("discard");
+		vbox.setAlignment(Pos.CENTER);
+		Text discard = new Text();
+		discard.setText("DISCARD");
+		vbox.getChildren().add(discard);
+		return vbox;
 	}
+
+
+
+
 
 }

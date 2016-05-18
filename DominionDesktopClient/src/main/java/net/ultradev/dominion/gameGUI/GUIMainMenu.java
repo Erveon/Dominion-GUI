@@ -36,7 +36,7 @@ public class GUIMainMenu {
 
 
 
-		localGameBtn = functions.createButton("Local Game",width,height);
+		localGameBtn = new CustomButton("Local Game",width,height).getButton();
 		localGameBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -45,7 +45,7 @@ public class GUIMainMenu {
             }
         });
 
-		onlineGameBtn = functions.createButton("Online Game",width,height);
+		onlineGameBtn = new CustomButton("Online Game",width,height).getButton();
 		onlineGameBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -53,7 +53,7 @@ public class GUIMainMenu {
             }
         });
 
-		Button optionsBtn = functions.createButton("Options",width,height);
+		Button optionsBtn =  new CustomButton("Options",width,height).getButton();
 		center.getChildren().addAll(localGameBtn,onlineGameBtn,optionsBtn);
 		root.setCenter(center);
 

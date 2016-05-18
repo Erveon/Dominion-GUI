@@ -11,13 +11,14 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import net.ultradev.dominion.game.local.LocalGame;
+import net.ultradev.dominion.gameGUI.CustomButton;
 import net.ultradev.dominion.gameGUI.GUtils;
 
 public class GameCreationMenu {
 
 	private BorderPane root;
 	private TextField[] listInput;
-	private GUtils utils = new GUtils();
+
 
 	public GameCreationMenu(){
 		listInput = new TextField[4];
@@ -43,7 +44,7 @@ public class GameCreationMenu {
 		buttonContainer.setAlignment(Pos.CENTER);
 		buttonContainer.setPadding(new Insets(0,0,20,0));
 
-		Button createGameBtn = utils.createButton("Create Game", 300, 100);
+		Button createGameBtn = new CustomButton("Create Game", 300, 100).getButton();
 		createGameBtn.setAlignment(Pos.CENTER);
 
 		createGameBtn.setOnAction(new EventHandler<ActionEvent>() {

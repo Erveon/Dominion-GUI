@@ -25,7 +25,6 @@ public class DominionGUIMain extends Application {
 	public static void setRoot(Pane root){
 		Scene scene = new Scene(root,1280,960);
 		stage.setScene(scene);
-
 		scene.getStylesheets().add (DominionGUIMain.class.getResource("MainStyle.css").toExternalForm());
 		stage.show();
 	}

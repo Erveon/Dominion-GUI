@@ -3,10 +3,14 @@ package net.ultradev.dominion.gameGUI;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.*;
+import javafx.stage.Stage;
 import net.sf.json.JSONObject;
 import net.ultradev.dominion.game.Turn;
 import net.ultradev.dominion.game.local.LocalGame;
@@ -20,15 +24,24 @@ public class GUIGame {
 	private Hand hand;
 	private GameTopMenu topMenu;
 	private PlayerBalk playerbalk;
-	private GUtils utils = new GUtils();
+
 	private CardSet cardSet;
 
+	private ExternalCardViewer cardViewer;
 
 	public GUIGame(Turn turn){
 		cardsPlayed = new ArrayList<miniCard>();
 		this.turn = turn;
 
 		createGameGUI();
+		cardViewer = new ExternalCardViewer();
+
+		root.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				cardSet.setBorder();
+	    }
+	});
 	}
 
 	public BorderPane getRoot(){
@@ -61,12 +74,16 @@ public class GUIGame {
 		return cardSet;
 	}
 
+	public ExternalCardViewer getCardViewer(){
+		return cardViewer;
+	}
+
 	public void loadCardsPlayed(){
 		cardsPlayed.clear();
 		List<JSONObject> JSONCardsPlayed = turn.getGame().getBoard().getPlayedCards();
 		for(int i = 0; i< JSONCardsPlayed.size(); i++){
 			JSONObject card = JSONCardsPlayed.get(i);
-			miniCard m = new miniCard(card);
+			miniCard m = new miniCard(card,this);
 			getListCardsPlayed().add(m);
 		}
 		getPlayZone().getCarousel().setCarouselMini(getPlayZone().getPlayZone(),getListCardsPlayed());
@@ -96,17 +113,18 @@ public class GUIGame {
 		VBox container = new VBox();
 		container.setSpacing(20);
 
-		cardSet = new CardSet(turn, this);
+		cardSet = new CardSet(this);
 
 		playzone = new PlayZone(cardsPlayed);
 
-		playerbalk = new PlayerBalk(turn,this);
+		playerbalk = new PlayerBalk(this);
 
 
 		container.getChildren().addAll(cardSet.getCardset(), playzone.getPlayZone(),playerbalk.getPlayerBalk());
 		return container;
 
 	}
+
 
 
 

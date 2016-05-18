@@ -9,15 +9,10 @@ import javafx.scene.layout.HBox;
 
 public class GUtils {
 
-	public Button createButton(String text,double width,double height){
-		Button btn = new Button();
-		btn.setText(text);
-		btn.setPrefSize(width, height);
-		return btn;
-	}
+
 
 	public Button createExit(){
-		Button exitBtn = createButton("Exit",75,50);
+		Button exitBtn = new CustomButton("Exit",75,50).getButton();
 		exitBtn.setOnAction(new EventHandler<ActionEvent>() {
 	            @Override
 	            public void handle(ActionEvent event) {
@@ -37,14 +32,6 @@ public class GUtils {
 		return hbox;
 	}
 
-	public String setType(String title,String description){
-		if(title.toLowerCase().equals("copper")||title.toLowerCase().equals("silver")||title.toLowerCase().equals("gold")){
-			return "treasure";
-		}else if(description.toLowerCase().contains("victory")){
-			return "victory";
-		}
-		return "action";
-	}
 
 }
 

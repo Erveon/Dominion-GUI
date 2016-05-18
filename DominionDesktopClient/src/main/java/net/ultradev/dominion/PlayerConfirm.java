@@ -14,6 +14,7 @@ import javafx.scene.text.Text;
 import net.ultradev.dominion.game.Game;
 import net.ultradev.dominion.game.Turn;
 import net.ultradev.dominion.game.local.LocalGame;
+import net.ultradev.dominion.gameGUI.CustomButton;
 import net.ultradev.dominion.gameGUI.GUIGame;
 import net.ultradev.dominion.gameGUI.GUtils;
 
@@ -53,7 +54,7 @@ public class PlayerConfirm {
 			playerName.setId("PlayerReady");
 			nameContainer.getChildren().add(playerName);
 
-			Button readyButton = functions.createButton("READY", width, height);
+			Button readyButton = new CustomButton("READY", width, height).getButton();
 			readyButton.setOnAction(new EventHandler<ActionEvent>() {
 	            @Override
 	            public void handle(ActionEvent event) {

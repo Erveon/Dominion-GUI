@@ -78,11 +78,6 @@ Text{
 	-fx-background-color:rgb(127, 140, 141);
 
 }
-
-
-#playerbalk{
-	-fx-background-color:rgb(192,57,43);
-}
 #playerbalk Text{
 	-fx-fill:white;
 	-fx-font-size: 15;

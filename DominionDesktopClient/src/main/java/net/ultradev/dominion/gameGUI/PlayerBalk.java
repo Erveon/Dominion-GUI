@@ -15,6 +15,8 @@ import javafx.scene.text.Text;
 import net.ultradev.dominion.DominionGUIMain;
 import net.ultradev.dominion.PlayerConfirm;
 import net.ultradev.dominion.game.Turn;
+import net.ultradev.dominion.game.card.action.Action;
+import net.ultradev.dominion.game.card.action.actions.RemoveCardAction;
 import net.ultradev.dominion.game.player.Player;
 
 public class PlayerBalk {
@@ -26,13 +28,13 @@ public class PlayerBalk {
 	private GUIGame parent;
 
 	private Button nextPhase;
-	private Button playButton;
+	private CustomButton playButton;
+	private CustomButton discardButton;
 
-	public PlayerBalk(Turn currentTurn, GUIGame parent){
-
-		this.players = currentTurn.getGame().getPlayers();
-		this.currentPlayer = currentTurn.getPlayer();
-		turn = currentTurn;
+	public PlayerBalk(GUIGame parent){
+		turn = parent.getTurn();
+		this.players = turn.getGame().getPlayers();
+		this.currentPlayer = turn.getPlayer();
 		this.parent = parent;
 		createPlayerBalk();
 	}
@@ -41,12 +43,20 @@ public class PlayerBalk {
 		return playerBalk;
 	}
 
-	public Button getPlayButtonText(){
+	public CustomButton getPlayButton(){
 		return playButton;
 	}
+	public CustomButton getDiscardButton(){
+		return discardButton;
+	}
+
+	public void changeDiscardToTrashButton(){
+		discardButton.getButton().setText("TRASH CARD");
+	}
+
 
 	public void setOnTreasurePhase(){
-		changePhase(0,"CLEAN-UP PHASE");
+		changePhase(0,"GO TO CLEAN-UP PHASE");
 	}
 
 	private void changePhase(int index, String text){
@@ -60,6 +70,7 @@ public class PlayerBalk {
 		playerBalk = new HBox();
 		int spacing = 10;
 		int width = 570;
+
 		HBox left = new HBox();
 		left.setMaxWidth(width);
 		left.setMinWidth(width);
@@ -76,14 +87,35 @@ public class PlayerBalk {
 		right.setMaxWidth(width);
 		right.setMinWidth(width);
 
-		playButton = createButton("PLAY CARD");
-		playButton.setOnAction(new EventHandler<ActionEvent>(){
+		discardButton = new CustomButton("DISCARD CARD");
+		discardButton.setActive(false);
+		discardButton.getButton().setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event){
-				parent.getHand().getActiveGCard().playCard();
+				for(Action action: parent.getHand().getLastPlayedCard().getActions()){
+					if(action instanceof RemoveCardAction){
+						((RemoveCardAction) action).selectCard(parent.getTurn(), parent.getHand().getActiveGCard().getSourceCard());
+						parent.getHand().getActiveGCard().removeCard();
+						System.out.println(parent.getTurn().getBuypower());
+					}
+				}
+
 			}
 		});
-		nextPhase = createButton("TREASURE PHASE");
+
+		playButton = new CustomButton("PLAY CARD");
+		playButton.getButton().setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event){
+				try{
+					parent.getHand().getActiveGCard().playCard();
+				}catch(Exception e){
+
+				}
+
+			}
+		});
+		nextPhase = new CustomButton("GO TO TREASURE PHASE").getButton();
 		nextPhase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -96,26 +128,27 @@ public class PlayerBalk {
             		case "BUY":
             			turn.endPhase();
             			changePhase(1,"END TURN");
+
                     	parent.getHand().reloadCards(true);
                     	parent.loadCardsPlayed();
                     	parent.getCardSet().loadRows();
                     	break;
             		default:
+            			parent.getCardViewer().close();
                     	PlayerConfirm playerConfirm = new PlayerConfirm(turn.getGame(),false);
                     	DominionGUIMain.setRoot(playerConfirm.getRoot());
                     	break;
             	}
+            	if(parent.getHand().getActiveGCard() != null){
+            		getPlayButton().setActive(turn.canPlay(turn.getPhase(), parent.getHand().getActiveGCard().getTitle()));
+            	}
 
-            	if(!parent.getTurn().canPlay(parent.getTurn().getPhase(), parent.getHand().getActiveGCard().getTitle())){
-        			parent.getPlayerbalk().getPlayButtonText().setStyle("-fx-background-color:gray");
-        		}else{
-        			parent.getPlayerbalk().getPlayButtonText().setStyle("-fx-background-color:rgb(192,57,43);");
-        		}
+
             }
         });
 
 
-		right.getChildren().addAll(playButton,nextPhase);
+		right.getChildren().addAll(discardButton.getButton(),playButton.getButton(),nextPhase);
 		playerBalk.getChildren().addAll(left,right);
 	}
 
@@ -147,7 +180,7 @@ public class PlayerBalk {
 		hbox.setSpacing(5);
 		hbox.setAlignment(Pos.CENTER);
 		hbox.setPadding(new Insets(0,10,0,0));
-		HBox phase = createPlayerBox("PHASE");
+		HBox phase = createPlayerBox("CURRENT PHASE");
 		hbox.setId("playerbalk");
 		phase.setId("playerTitle");
 		hbox.getChildren().add(phase);
@@ -177,14 +210,5 @@ public class PlayerBalk {
 		circle.setRadius(7.5);
 		circle.setFill(Color.rgb(236, 240, 241));
 		return circle;
-	}
-
-	private Button createButton(String text){
-		Button btn = new Button();
-		btn.setText(text);
-		btn.setPrefHeight(36);
-		btn.setId("gameButton");
-		btn.setPadding(new Insets(0,10,0,10));
-		return btn;
 	}
 }

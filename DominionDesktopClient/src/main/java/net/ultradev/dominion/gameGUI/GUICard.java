@@ -12,7 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-
+import net.sf.json.JSONObject;
 import net.ultradev.dominion.game.card.Card;
 
 public class GUICard {
@@ -24,21 +24,41 @@ public class GUICard {
 	private Image img;
 	private Hand parent;
 
-	private GUtils utils = new GUtils();
+	private boolean showCard;
 
-
+	private Card sourceCard;
 
 	public GUICard(Card card, Hand parent){
-
+		sourceCard = card;
 		this.parent = parent;
 		this.title = card.getName();
 		type = card.getType().toString().toLowerCase();
+
 		this.cardDesription = card.getDescription();
 		this.cost = card.getCost();
 		this.img = new Image("File:Images/copper.jpg");
+		showCard = false;
 		createCard();
 
 	}
+
+	public GUICard(){
+		cardBox = new VBox();
+		ImageView iv = createImg(new Image("File:Images/Card_back.jpg"),220,310);
+		cardBox.getChildren().add(iv);
+
+	}
+
+	public GUICard(JSONObject card){
+		title = card.getString("name");
+		type = card.getString("type").toLowerCase();
+		cardDesription = card.getString("description");
+		cost = card.getInt("cost");
+		this.img = new Image("File:Images/copper.jpg");
+		showCard = true;
+		createCard();
+
+		}
 
 	public VBox getCard(){
 		return cardBox;
@@ -56,35 +76,40 @@ public class GUICard {
 		return title;
 	}
 
+	public Card getSourceCard(){
+		return sourceCard;
+	}
+
 
 
 	private void createCard(){
 		int width = 220;
 		int height = 160;
-		cardBox = createVBox(type,width);
-		VBox titleBox = createTitle(title,30);
+		cardBox = createVBox(width);
+		VBox titleBox = createTitle(30);
 		ImageView iv = createImg(img,width,height);
-		VBox description = createDescription(title);
-		HBox bottom = createBottomCard(title);
+		VBox description = createDescription();
+		HBox bottom = createBottomCard();
 		cardBox.getChildren().addAll(titleBox,iv,description,bottom);
+		if(!showCard){
+			this.getCard().setOnMouseClicked(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent mouseEvent) {
+					if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+						if(checkActive()){
+							playCard();
+						}
+						else{
+							selectCard();
 
-		this.getCard().setOnMouseClicked(new EventHandler<MouseEvent>() {
-		  @Override
-		    public void handle(MouseEvent mouseEvent) {
-		        if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-		        	if(checkActive()){
-		        		playCard();
-		        	}
-		        	else{
-		        		selectCard();
-		        	}
+						}
 
-		        }
+					}
 		    }
-		});
+		});}
 	}
 
-	private VBox createVBox(String type, int width){
+	private VBox createVBox(int width){
 		VBox vbox = new VBox();
 		vbox.setId(type);
 		vbox.setFillWidth(true);
@@ -93,7 +118,7 @@ public class GUICard {
 		return vbox;
 	}
 
-	private VBox createTitle(String title,int height){
+	private VBox createTitle(int height){
 		VBox titleBox = new VBox();
 		titleBox.setPrefHeight(height);
 		titleBox.setAlignment(Pos.CENTER);
@@ -112,15 +137,20 @@ public class GUICard {
 		return iv;
 	}
 
-	private VBox createDescription(String title){
+	private VBox createDescription(){
 		VBox vbox = new VBox();
 
 		vbox.setPrefHeight(100);
+		vbox.setMaxHeight(100);
 		vbox.setAlignment(Pos.CENTER);
 		vbox.setId("description");
 		Text cardTitle = new Text();
 		cardTitle.setText(cardDesription);
 		cardTitle.setId("cardtitle");
+		if(cardDesription.length()>100){
+			cardTitle.setStyle("-fx-font-size: 12");
+		}
+
 		cardTitle.setWrappingWidth(200);
 		cardTitle.setTextAlignment(TextAlignment.CENTER);
 
@@ -130,10 +160,10 @@ public class GUICard {
 		return vbox;
 	}
 
-	private HBox createBottomCard(String title){
+	private HBox createBottomCard(){
 		HBox hbox = new HBox();
 		hbox.setId("BottomCard");
-		hbox.setPrefHeight(18);
+		hbox.setMinHeight(18);
 		hbox.setFillHeight(true);
 		hbox.setPadding(new Insets(5,0,5,0));
 
@@ -162,39 +192,39 @@ public class GUICard {
 
 	private boolean checkActive(){
 		if(parent.getActiveGCard() != null){
-
 			return parent.getActiveGCard().equals(this);
 		}
-
 		return false;
 
 	}
 
 	private void selectCard(){
 		parent.setActiveGCard(this);
-		cardBox.setStyle("-fx-border-color: white; -fx-border-width: 4");
-		for(int i = 0; i< parent.getCards().size();i++){
-			if(!parent.getCards().get(i).equals(this)){
-				parent.getCards().get(i).getCard().setStyle("-fx-border: none");
-			}
-		}
-		if(!parent.getParent().getTurn().canPlay(parent.getParent().getTurn().getPhase(), title)){
-			parent.getParent().getPlayerbalk().getPlayButtonText().setStyle("-fx-background-color:gray");
-		}else{
-			parent.getParent().getPlayerbalk().getPlayButtonText().setStyle("-fx-background-color:rgb(192,57,43);");
-		}
 	}
 
 	public void playCard(){
 		//Kaart spelen
-		String response = parent.getParent().getTurn().playCard(title).getString("response");
-		//System.out.println(parent.getParent().getTurn().getPlayer().getHand());
-		if(!response.equals("invalid")){
-			parent.getCards().remove(this);
-			parent.reloadCards(false);
-			parent.getParent().getTopMenu().reloadCounters();
-			parent.getParent().loadCardsPlayed();
+		JSONObject response = parent.getParent().getTurn().playCard(title);
+		System.out.println(response);
+		if(!response.getString("response").equals("invalid")){
+			parent.setLastCardPlayed(sourceCard);
+			if(cardDesription.toLowerCase().contains("discard")){
+				parent.getParent().getPlayerbalk().getDiscardButton().setActive(true);
+			}
+			if(cardDesription.toLowerCase().contains("trash")){
+				parent.getParent().getPlayerbalk().getDiscardButton().setActive(true);
+				parent.getParent().getPlayerbalk().changeDiscardToTrashButton();
+			}
+			removeCard();
+
 		}
+	}
+
+	public void removeCard(){
+		parent.getCards().remove(this);
+		parent.reloadCards(false);
+		parent.getParent().getTopMenu().reloadCounters();
+		parent.getParent().loadCardsPlayed();
 	}
 
 

@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import net.ultradev.dominion.game.Turn;
 import net.ultradev.dominion.game.local.LocalGame;
+import net.ultradev.dominion.gameGUI.CustomButton;
 import net.ultradev.dominion.gameGUI.GUtils;
 
 public class LocalGameMenu {
@@ -33,29 +34,18 @@ public class LocalGameMenu {
 		VBox center = new VBox();
 		center.setAlignment(Pos.CENTER);
 
-		Button newGame = functions.createButton("Create new Game", width, height);
+		Button newGame = new CustomButton("Create new Game", width, height).getButton();
 		newGame.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
 
-            	/*GameServer gs = new GameServer();
-                gs.getUtils().setDebugging(false);
-                LocalGame localGame = gs.getGameManager().createGame(null);
-                //tijdelijk TODO Apart menu maken om spel in te stellen
-                localGame.addPlayer("John_Cena");
-                localGame.addPlayer("RickAstley");
-                localGame.addPlayer("DonaldPlumb");
-                localGame.start();
-
-                PlayerConfirm pC = new PlayerConfirm(localGame,true);*/
-
-            	GameCreationMenu gcm = new GameCreationMenu();
+                GameCreationMenu gcm = new GameCreationMenu();
 
             	DominionGUIMain.setRoot(gcm.getRoot());
 
             }
         });
-		Button loadGame = functions.createButton("Load Game", width, height);
+		Button loadGame = new CustomButton("Load Game", width, height).getButton();
 		center.getChildren().addAll(newGame,loadGame);
 		root.setCenter(center);
 
