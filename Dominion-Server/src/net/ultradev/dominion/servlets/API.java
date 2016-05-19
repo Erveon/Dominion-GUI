@@ -30,9 +30,8 @@ public class API extends HttpServlet {
 		// Buy card > ?action=buycard&type=local&card=copper
 		// Select card > ?action=selectcard&type=local&card=copper
 		// Set card set > ?action=setconfig&type=local&key=setcardset&value=test
-	
-	// AJAX CALLS TODO
 		// Play card > ?action=playcard&type=local&card=copper
+		// Stop an active action & continue card actions > ?action=stopaction&type=local
 	
 	GameServer gs;
        
@@ -45,7 +44,6 @@ public class API extends HttpServlet {
     
     public void init() throws ServletException {
         this.gs = new GameServer();
-        gs.getUtils().setDebugging(true);
     }
     
     public GameServer getGameServer() {
@@ -69,7 +67,7 @@ public class API extends HttpServlet {
 			LocalGame g = getGameServer().getGameManager().getGame(req.getSession());
 			res.getWriter().append(getGameServer().getGameManager().handleLocalRequest(getParameters(req), g, req.getSession()).toString());
 			return;
-		} else if(type.equals("online")) {
+		} else if(type.equals("mp")) {
 			res.getWriter().append(getGameServer().getGameManager().getInvalid("Multiplayer is unsupported at this time").toString());
 		}
 		
@@ -78,8 +76,9 @@ public class API extends HttpServlet {
 	
 	public Map<String, String> getParameters(HttpServletRequest req) {
 		Map<String, String> params = new HashMap<>();
-		for(String s : req.getParameterMap().keySet())
+		for(String s : req.getParameterMap().keySet()) {
 			params.put(s, req.getParameter(s));
+		}
 		return params;
 	}
 

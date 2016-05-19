@@ -24,13 +24,13 @@ public class RemoveCardAction extends Action {
 	
 	Map<Player, Integer> cardsRemoved;
 	
-	List<Card> restriction;
+	List<Card> permitted;
 	
 	public RemoveCardAction(ActionTarget target, RemoveType type, String identifier, String description) {
 		super(identifier, description, target);
 		this.cardsRemoved = new HashMap<>();
 		this.countType = RemoveCount.CHOOSE_AMOUNT;
-		this.restriction = new ArrayList<>();
+		this.permitted = new ArrayList<>();
 		this.type = type;
 	}
 	
@@ -39,7 +39,7 @@ public class RemoveCardAction extends Action {
 		this.cardsRemoved = new HashMap<>();
 		this.amount = amount;
 		this.countType = RemoveCount.SPECIFIC_AMOUNT;
-		this.restriction = new ArrayList<>();
+		this.permitted = new ArrayList<>();
 		this.type = type;
 	}
 	
@@ -49,7 +49,7 @@ public class RemoveCardAction extends Action {
 		this.min = min;
 		this.max = max;
 		this.countType = RemoveCount.RANGE;
-		this.restriction = new ArrayList<>();
+		this.permitted = new ArrayList<>();
 		this.type = type;
 	}
 	
@@ -63,29 +63,34 @@ public class RemoveCardAction extends Action {
 			this.max = amount;
 			this.countType = RemoveCount.MAXIMUM;
 		}
-		this.restriction = new ArrayList<>();
+		this.permitted = new ArrayList<>();
 		this.type = type;
 	}
 	
-	public void addRestriction(Card card) {
-		restriction.add(card);
+	public void addPermitted(Card card) {
+		permitted.add(card);
 	}
 	
 	public boolean isRestricted() {
-		return restriction.size() == 0;
+		return permitted.size() != 0;
 	}
 	
-	public List<Card> getRestriction() {
-		return restriction;
+	public List<Card> getPermitted() {
+		return permitted;
 	}
 
 	@Override
 	public JSONObject play(Turn turn) {
+		cardsRemoved.put(turn.getPlayer(), 0);
 		return getResponse(turn);
 	}
 	
 	public JSONObject selectCard(Turn turn, Card card) {
 		Player player = turn.getPlayer();
+		
+		if(isRestricted() && !getPermitted().contains(card)) {
+			return turn.getGame().getGameServer().getGameManager().getInvalid("Cannot select that card, it is resricted");
+		}
 		
 		switch(type) {
 			case DISCARD:
@@ -98,16 +103,33 @@ public class RemoveCardAction extends Action {
 				break;
 		}
 		
-		for(Action action : getCallbacks())
-			action.play(turn);
+		for(Action action : getCallbacks()) {
+			action.setMaster(player, card);
+			JSONObject played = action.play(turn);
+			if(action instanceof GainCardAction) {
+				return played;
+			}
+		}
 		
-		cardsRemoved.put(turn.getPlayer(), removedCards(player) + 1);
+		return finish(turn);
+	}
+	
+	@Override
+	public JSONObject finish(Turn turn) {
+		int removedCards = getRemovedCards(turn.getPlayer()) + 1;
+		cardsRemoved.put(turn.getPlayer(), removedCards);
+		
+		if(max != 0 && removedCards >= max) {
+			return turn.stopAction();
+		}
+		
 		return getResponse(turn);
 	}
 	
-	public int removedCards(Player player) {
-		if(cardsRemoved.containsKey(player))
+	public int getRemovedCards(Player player) {
+		if(cardsRemoved.containsKey(player)) {
 			return cardsRemoved.get(player);
+		}
 		return 0;
 	}
 	
@@ -116,9 +138,9 @@ public class RemoveCardAction extends Action {
 			case CHOOSE_AMOUNT:
 				return false;
 			case RANGE:
-				return removedCards(player) < this.min;
+				return getRemovedCards(player) < this.min;
 			case SPECIFIC_AMOUNT:
-				return removedCards(player) == this.amount;
+				return getRemovedCards(player) == this.amount;
 			default:
 				return false;
 		}
@@ -129,9 +151,9 @@ public class RemoveCardAction extends Action {
 			case CHOOSE_AMOUNT:
 				return true;
 			case RANGE:
-				return removedCards(player) < this.max;
+				return getRemovedCards(player) < this.max;
 			case SPECIFIC_AMOUNT:
-				return removedCards(player) != this.amount;
+				return getRemovedCards(player) != this.amount;
 			default:
 				return false;
 		}
@@ -140,11 +162,10 @@ public class RemoveCardAction extends Action {
 	public JSONObject getResponse(Turn turn) {
 		JSONObject response = new JSONObject().accumulate("response", "OK");
 		if(canSelectMore(turn.getPlayer())) {
-			response.accumulate("result", ActionResult.SELECT_CARD);
+			response.accumulate("result", ActionResult.SELECT_CARD_HAND);
 			response.accumulate("force", hasForceSelect(turn.getPlayer()));
 		} else {
 			response.accumulate("result", ActionResult.DONE);
-			//return turn.playCard(turn.getActiveCard().getName()); wat?
 		}
 		return response;
 	}
