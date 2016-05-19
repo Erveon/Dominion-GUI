@@ -37,6 +37,10 @@ public class KingdomCard {
 		return cost;
 	}
 
+	public String getTitle(){
+		return title;
+	}
+
 	private void loadAmount(){
 		amount = amount -1;
 		countCard.setText(Integer.toString(amount));
@@ -72,12 +76,17 @@ public class KingdomCard {
 		GUICard.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			  @Override
 			  public void handle(MouseEvent mouseEvent) {
+				  if(parent.getGUIGame().getHand().getActiveGCard() != null){
+					  parent.getGUIGame().getHand().removeBorder();
+				  }
 			        if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
 			        	if(checkIsActive()){
 			        		buyCard();
+			        		parent.loadTrashAndDeck();
 			        	}else{
 			        		selectThis();
 			        	}
+
 
 			        }
 			    }
@@ -104,6 +113,7 @@ public class KingdomCard {
 		if(response.equals("BOUGHT"))		{
 			loadAmount();
 			parent.getGUIGame().getTopMenu().reloadCounters();
+			parent.removeBorder();
 		}}
 		catch(Exception e){
 

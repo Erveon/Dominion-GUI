@@ -95,6 +95,10 @@ public class GUICard {
 			this.getCard().setOnMouseClicked(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent mouseEvent) {
+					if(parent.getParent().getCardSet().getSelectedKingdomCard() != null)
+					{
+						parent.getParent().getCardSet().removeBorder();
+					}
 					if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
 						if(checkActive()){
 							playCard();
@@ -204,23 +208,30 @@ public class GUICard {
 
 	public void playCard(){
 		//Kaart spelen
+
+
 		JSONObject response = parent.getParent().getTurn().playCard(title);
-		System.out.println(response);
-		if(!response.getString("response").equals("invalid")){
+		//System.out.println(response);
+		if(response.getString("response").equals("OK")){
 			parent.setLastCardPlayed(sourceCard);
 			if(cardDesription.toLowerCase().contains("discard")){
 				parent.getParent().getPlayerbalk().getDiscardButton().setActive(true);
 			}
 			if(cardDesription.toLowerCase().contains("trash")){
 				parent.getParent().getPlayerbalk().getDiscardButton().setActive(true);
-				parent.getParent().getPlayerbalk().changeDiscardToTrashButton();
+				parent.getParent().getPlayerbalk().getDiscardButton().getButton().setText("TRASH CARD");
 			}
-			removeCard();
+			removeCardGUI();
+			if(!response.getString("result").equals("DONE"))
+			{
+				parent.getParent().getPlayerbalk().getDiscardBtnEventHandler().setAction(parent.getParent().getTurn().getActiveAction());
+				parent.getParent().getPlayerbalk().getDiscardBtnEventHandler().setActive(true);
+			}
 
 		}
 	}
 
-	public void removeCard(){
+	public void removeCardGUI(){
 		parent.getCards().remove(this);
 		parent.reloadCards(false);
 		parent.getParent().getTopMenu().reloadCounters();

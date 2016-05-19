@@ -48,6 +48,11 @@ public class Hand {
 		return lastCardPlayed;
 	}
 
+	public void removeBorder(){
+		activeGCard.getCard().setStyle("-fx-border: none");
+		activeGCard = null;
+	}
+
 	public void setActiveGCard(GUICard card){
 		activeGCard = card;
 		activeGCard.getCard().setStyle("-fx-border-color: white; -fx-border-width: 4");

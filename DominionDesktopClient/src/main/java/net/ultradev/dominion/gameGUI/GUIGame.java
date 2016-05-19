@@ -35,13 +35,6 @@ public class GUIGame {
 
 		createGameGUI();
 		cardViewer = new ExternalCardViewer();
-
-		root.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
-				cardSet.setBorder();
-	    }
-	});
 	}
 
 	public BorderPane getRoot(){

@@ -5,11 +5,13 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import net.ultradev.dominion.game.GameConfig;
 import net.ultradev.dominion.game.local.LocalGame;
 import net.ultradev.dominion.gameGUI.CustomButton;
 import net.ultradev.dominion.gameGUI.GUtils;
@@ -18,6 +20,8 @@ public class GameCreationMenu {
 
 	private BorderPane root;
 	private TextField[] listInput;
+	private GUtils utils = new GUtils();
+	private ComboBox<String> setlist;
 
 
 	public GameCreationMenu(){
@@ -61,7 +65,8 @@ public class GameCreationMenu {
                 		localGame.addPlayer(listInput[i].getText());
                 	}
                 }
-                localGame.getConfig().setCardset("test");
+                String chosenString = setlist.getValue();
+                localGame.getConfig().setCardset(chosenString);
                 localGame.start();
 
                 PlayerConfirm pc = new PlayerConfirm(localGame,true);
@@ -78,8 +83,7 @@ public class GameCreationMenu {
 		VBox labelBox = new VBox();
 		labelBox.setSpacing(20);
 		for(int i=0;i<4;i++){
-			HBox hbox = new HBox();
-			hbox.setAlignment(Pos.CENTER);
+			HBox hbox = utils.createCenterHBox("");
 			hbox.setSpacing(50);
 			Text playerLabel = createPlayerLabel(i);
 			TextField textfield = createTextField();
@@ -87,6 +91,22 @@ public class GameCreationMenu {
 			hbox.getChildren().addAll(playerLabel,textfield );
 			labelBox.getChildren().add(hbox);
 		}
+
+		HBox setlistBox = utils.createCenterHBox("");
+		setlistBox.setSpacing(60);
+		setlist = new ComboBox<String>();
+
+		for(int i =0; i<GameConfig.CardSet.values().length; i++){
+			setlist.getItems().add(GameConfig.CardSet.values()[i].toString());
+		}
+		setlist.setValue(GameConfig.CardSet.values()[0].toString());
+
+
+		Text listLabel = new Text();
+		listLabel.setText("Choose a set");
+		listLabel.setFill(Paint.valueOf("white"));
+		setlistBox.getChildren().addAll(listLabel,setlist);
+		labelBox.getChildren().add(setlistBox);
 
 		return labelBox;
 	}

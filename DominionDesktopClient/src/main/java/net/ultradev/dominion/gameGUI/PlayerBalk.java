@@ -12,6 +12,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
+import net.sf.json.JSONObject;
 import net.ultradev.dominion.DominionGUIMain;
 import net.ultradev.dominion.PlayerConfirm;
 import net.ultradev.dominion.game.Turn;
@@ -31,12 +32,25 @@ public class PlayerBalk {
 	private CustomButton playButton;
 	private CustomButton discardButton;
 
+	private ActionButtonEventHandler actionBtnEventHandler;
+
+
+
 	public PlayerBalk(GUIGame parent){
 		turn = parent.getTurn();
 		this.players = turn.getGame().getPlayers();
 		this.currentPlayer = turn.getPlayer();
 		this.parent = parent;
+		actionBtnEventHandler = new ActionButtonEventHandler(this);
 		createPlayerBalk();
+	}
+
+	public GUIGame getParent(){
+		return parent;
+	}
+
+	public ActionButtonEventHandler getDiscardBtnEventHandler(){
+		return actionBtnEventHandler;
 	}
 
 	public HBox getPlayerBalk(){
@@ -48,15 +62,6 @@ public class PlayerBalk {
 	}
 	public CustomButton getDiscardButton(){
 		return discardButton;
-	}
-
-	public void changeDiscardToTrashButton(){
-		discardButton.getButton().setText("TRASH CARD");
-	}
-
-
-	public void setOnTreasurePhase(){
-		changePhase(0,"GO TO CLEAN-UP PHASE");
 	}
 
 	private void changePhase(int index, String text){
@@ -89,19 +94,7 @@ public class PlayerBalk {
 
 		discardButton = new CustomButton("DISCARD CARD");
 		discardButton.setActive(false);
-		discardButton.getButton().setOnAction(new EventHandler<ActionEvent>(){
-			@Override
-			public void handle(ActionEvent event){
-				for(Action action: parent.getHand().getLastPlayedCard().getActions()){
-					if(action instanceof RemoveCardAction){
-						((RemoveCardAction) action).selectCard(parent.getTurn(), parent.getHand().getActiveGCard().getSourceCard());
-						parent.getHand().getActiveGCard().removeCard();
-						System.out.println(parent.getTurn().getBuypower());
-					}
-				}
-
-			}
-		});
+		discardButton.getButton().setOnAction(actionBtnEventHandler);
 
 		playButton = new CustomButton("PLAY CARD");
 		playButton.getButton().setOnAction(new EventHandler<ActionEvent>(){
@@ -123,7 +116,7 @@ public class PlayerBalk {
             	switch(parent.getTurn().getPhase().toString()){
             		case "ACTION":
             			turn.endPhase();
-            			setOnTreasurePhase();
+            			changePhase(0,"GO TO CLEAN-UP PHASE");
             			break;
             		case "BUY":
             			turn.endPhase();

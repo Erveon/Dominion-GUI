@@ -16,7 +16,8 @@ public class CardSet {
 	private GUIGame guiGame;
 	private VBox rowContainer;
 
-
+	private Text countCardTrash;
+	private Text countCardDeck;
 
 	private ArrayList<KingdomCard>  kingdomCards;
 
@@ -45,9 +46,19 @@ public class CardSet {
 		return selectedKingdomCard;
 	}
 
+	public void loadTrashAndDeck(){
+		countCardTrash.setText(String.valueOf(board.getAsJson().getJSONArray("trash").size()));
+		countCardDeck.setText(String.valueOf(turn.getPlayer().getDeck().size()));
+	}
+
+	public void removeBorder(){
+		selectedKingdomCard.getCard().setStyle("-fx-border: none");
+		selectedKingdomCard = null;
+	}
+
 	public void setBorder(){
-		try{
-		if(selectedKingdomCard.getCost() > turn.getBuypower()){
+
+		if(selectedKingdomCard.getCost() > turn.getBuypower() || !turn.getPhase().toString().equals("BUY")){
 			selectedKingdomCard.getCard().setStyle("-fx-border-color: red; -fx-border-width: 4");
 		}else{
 			selectedKingdomCard.getCard().setStyle("-fx-border-color: white; -fx-border-width: 4");
@@ -56,9 +67,6 @@ public class CardSet {
 			if(!kingdomCards.get(i).equals(selectedKingdomCard)){
 				kingdomCards.get(i).getCard().setStyle("-fx-border: none");
 			}
-		}}
-		catch(Exception e){
-
 		}
 	}
 
@@ -133,8 +141,24 @@ public class CardSet {
 	private VBox createFourthRow(){
 		JSONArray victory =  board.getAsJson().getJSONArray("victory");
 
-		VBox trash = createDeckType("trash",board.getAsJson().getJSONArray("trash").size());
-		VBox deck = createDeckType("Deck",turn.getPlayer().getDeck().size());
+		VBox trash = createDeckType("trash");
+		HBox cardinfoTrash = new HBox();
+		cardinfoTrash.setAlignment(Pos.CENTER);
+		countCardTrash = new Text();
+		countCardTrash.setId("deckCount");
+		cardinfoTrash.getChildren().add(countCardTrash);
+
+
+		VBox deck = createDeckType("Deck");
+		HBox cardinfoDeck = new HBox();
+		cardinfoDeck.setAlignment(Pos.CENTER);
+		countCardDeck = new Text();
+		countCardDeck.setId("deckCount");
+		cardinfoDeck.getChildren().add(countCardDeck);
+		loadTrashAndDeck();
+
+		trash.getChildren().add(cardinfoTrash);
+		deck.getChildren().add(cardinfoDeck);
 		VBox row = generateLastRows(trash,victory,"victory",deck);
 		return row;
 	}
@@ -157,23 +181,21 @@ public class CardSet {
 		return vbox;
 	}
 
-	private VBox createDeckType(String title,int count){
+	private VBox createDeckType(String title){
 		VBox vbox = new VBox();
 		vbox.setPrefSize(220, 70);
 		vbox.setId("deck");
 		vbox.setFillWidth(true);
 		vbox.setAlignment(Pos.TOP_CENTER);
 		vbox.setPadding(new Insets(5,0,0,0));
+
 		Text cardtitle = new Text();
 		cardtitle.setId("cardtitle");
 		cardtitle.setText(title.toUpperCase());
-		HBox cardinfo = new HBox();
-		cardinfo.setAlignment(Pos.CENTER);
-		Text countCard = new Text();
-		countCard.setId("deckCount");
-		countCard.setText(String.valueOf(count));
-		cardinfo.getChildren().add(countCard);
-		vbox.getChildren().addAll(cardtitle,cardinfo);
+
+
+
+		vbox.getChildren().add(cardtitle);
 		return vbox;
 	}
 

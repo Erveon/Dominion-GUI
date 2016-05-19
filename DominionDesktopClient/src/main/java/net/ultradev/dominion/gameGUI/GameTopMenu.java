@@ -38,9 +38,7 @@ public class GameTopMenu {
 		coinsText.setText(Integer.toString(turn.getBuypower()));
 		buyCounterText.setText(Integer.toString(turn.getBuys()));
 
-		if(turn.getActions() == 0 ){
-			parent.getPlayerbalk().setOnTreasurePhase();
-		}
+
 
 	}
 
@@ -88,7 +86,7 @@ public class GameTopMenu {
 
 		VBox actionCounter = createCounter("ACTION",actionCounterText);
 		VBox buyCounter = createCounter("BUYS",buyCounterText);
-		VBox coinCounter = createCounter("GOLD",coinsText);
+		VBox coinCounter = createCounter("COINS",coinsText);
 
 		counterBox.getChildren().addAll(actionCounter,buyCounter,coinCounter);
 		return counterBox;
