@@ -4,6 +4,9 @@ import java.util.*;
 
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
+import net.ultradev.domininion.GUIUtils.Carousel;
+import net.ultradev.domininion.GUIUtils.GUtils;
+import net.ultradev.dominion.cardsGUI.GUICard;
 import net.ultradev.dominion.game.card.Card;
 import net.ultradev.dominion.game.player.Player;
 
@@ -21,6 +24,8 @@ public class Hand {
 
 	private Player player;
 	private boolean selectionScreen;
+
+
 
 	public Hand(GUIGame parent){
 		this.parent = parent;
@@ -70,15 +75,15 @@ public class Hand {
 	public void setActiveGCard(GUICard card){
 		selectedCard = card;
 		if(selectedCard != null){
-		selectedCard.getCard().setStyle("-fx-border-color: white; -fx-border-width: 4");
-		for(int i = 0; i< getCards().size();i++){
-			if(!getCards().get(i).equals(selectedCard)){
-				getCards().get(i).getCard().setStyle("-fx-border: none");
-			}
+			selectedCard.getCard().setStyle("-fx-border-color: white; -fx-border-width: 4");
+			for(int i = 0; i< getCards().size();i++){
+				if(!getCards().get(i).equals(selectedCard)){
+					getCards().get(i).getCard().setStyle("-fx-border: none");
+				}
 		}
-		if(!selectionScreen)
+		if(player.getGame().getTurn().getActiveAction() == null)
 		{
-			getParent().getPlayerbalk().getPlayButton().setActive(getParent().getTurn().canPlay(getParent().getTurn().getPhase(), selectedCard.getTitle()));
+			getParent().getPlayerbalk().getActionButton().setActive(getParent().getTurn().canPlay(getParent().getTurn().getPhase(), selectedCard.getTitle()));
 		}
 		}
 	}

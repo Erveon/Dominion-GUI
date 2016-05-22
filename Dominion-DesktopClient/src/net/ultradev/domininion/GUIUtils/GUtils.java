@@ -1,4 +1,4 @@
-package net.ultradev.dominion.gameGUI;
+package net.ultradev.domininion.GUIUtils;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

@@ -1,4 +1,4 @@
-package net.ultradev.dominion.gameGUI;
+package net.ultradev.domininion.GUIUtils;
 
 
 
@@ -9,6 +9,8 @@ import javafx.event.EventHandler;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.*;
+import net.ultradev.dominion.cardsGUI.GUICard;
+import net.ultradev.dominion.cardsGUI.MiniCard;
 
 public class Carousel {
 	private Polygon buttonLeft;
@@ -41,7 +43,7 @@ public class Carousel {
 
 		box.getChildren().add(buttonRight);
 	}
-	public void setCarouselMini(HBox box, ArrayList<miniCard> Gcards){
+	public void setCarouselMini(HBox box, ArrayList<MiniCard> Gcards){
 		cards.clear();
 		for(int i=0;i<Gcards.size();i++){
 			cards.add(Gcards.get(i).getCard());

@@ -1,4 +1,4 @@
-package net.ultradev.dominion.gameGUI;
+package net.ultradev.dominion.cardsGUI;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import net.sf.json.JSONObject;
 import net.ultradev.dominion.game.card.Card;
+import net.ultradev.dominion.gameGUI.CardSet;
 
 public class KingdomCard {
 	private Card Sourcecard;
@@ -110,21 +111,22 @@ public class KingdomCard {
 
 	private void selectThis(){
 		parent.selectKingdomCard(this);
+
 		VBox newCard = new GUICard(Sourcecard.getAsJson()).getCard();
 		parent.getParent().getCardViewer().setRoot(newCard);
+
 		if(parent.getParent().getTurn().getPhase().toString().equals("BUY")){
-			parent.getParent().getPlayerbalk().getPlayButton().getButton().setText("BUY CARD");
+			parent.getParent().getPlayerbalk().getActionButton().getButton().setText("BUY CARD");
 		}
 	}
 
 	public void buyCard(){
-
 		try{
 		String response = parent.getParent().getTurn().buyCard(title).getString("result");
 		if(response.equals("BOUGHT"))		{
 			decreaseAmount();
 			parent.getParent().getTopMenu().reloadCounters();
-
+			parent.getParent().getPlayerbalk().getActionButton().setActive(false);
 		}}
 		catch(Exception e){
 		}

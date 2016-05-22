@@ -6,6 +6,7 @@ import javafx.geometry.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import net.sf.json.*;
+import net.ultradev.dominion.cardsGUI.KingdomCard;
 import net.ultradev.dominion.game.*;
 
 public class CardSet {
@@ -63,8 +64,10 @@ public class CardSet {
 		}else{
 			if(selectedKingdomCard.getCost() > turn.getBuypower() ){
 				selectedKingdomCard.getCard().setStyle("-fx-border-color: red; -fx-border-width: 4");
+				parent.getPlayerbalk().getActionButton().setActive(false);
 			}else{
 				selectedKingdomCard.getCard().setStyle("-fx-border-color: white; -fx-border-width: 4");
+				parent.getPlayerbalk().getActionButton().setActive(true);
 			}
 		}
 		for(int i = 0; i< kingdomCards.size();i++){

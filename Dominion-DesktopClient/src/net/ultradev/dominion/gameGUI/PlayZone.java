@@ -4,12 +4,14 @@ import java.util.*;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
+import net.ultradev.domininion.GUIUtils.Carousel;
+import net.ultradev.dominion.cardsGUI.MiniCard;
 
 public class PlayZone {
 	private HBox playzone;
 	private Carousel c ;
 
-	public PlayZone(ArrayList<miniCard> cardsPlayed){
+	public PlayZone(ArrayList<MiniCard> cardsPlayed){
 		c = new Carousel();
 		createPlayZone();
 	}

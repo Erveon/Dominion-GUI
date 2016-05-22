@@ -1,4 +1,4 @@
-package net.ultradev.dominion;
+package net.ultradev.dominion.menus;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,9 +11,12 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
+import net.ultradev.domininion.GUIUtils.GUtils;
+import net.ultradev.dominion.DominionGUIMain;
+import net.ultradev.dominion.GameServer;
 import net.ultradev.dominion.game.GameConfig;
 import net.ultradev.dominion.game.local.LocalGame;
-import net.ultradev.dominion.gameGUI.GUtils;
+import net.ultradev.dominion.specialScreens.PlayerConfirm;
 
 public class GameCreationMenu {
 
@@ -56,7 +59,7 @@ public class GameCreationMenu {
 
             	GameServer gs = new GameServer();
             	gs.getUtils().setDebugging(true);
-                LocalGame localGame = gs.getGameManager().createGame(null);
+                LocalGame localGame = gs.getGameManager().createLocalGame(null);
 
                 for(int i=0;i<4;i++){
                 	if(!listInput[i].getText().equals(""))

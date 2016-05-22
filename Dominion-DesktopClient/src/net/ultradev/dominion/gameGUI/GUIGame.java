@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import net.sf.json.JSONObject;
+import net.ultradev.dominion.cardsGUI.MiniCard;
 import net.ultradev.dominion.game.Turn;
 import net.ultradev.dominion.game.player.Player;
 
@@ -14,7 +15,7 @@ import net.ultradev.dominion.game.player.Player;
 public class GUIGame {
 	private BorderPane root;
 	private Turn turn;
-	private ArrayList<miniCard> cardsPlayed;
+	private ArrayList<MiniCard> cardsPlayed;
 	private PlayZone playzone;
 	private Hand hand;
 	private GameTopMenu topMenu;
@@ -27,7 +28,7 @@ public class GUIGame {
 	private Player player;
 
 	public GUIGame(Turn turn, boolean newTurn, String player){
-		cardsPlayed = new ArrayList<miniCard>();
+		cardsPlayed = new ArrayList<MiniCard>();
 		this.player = turn.getGame().getPlayerByName(player);
 		this.turn = turn;
 		createGameGUI();
@@ -42,7 +43,7 @@ public class GUIGame {
 		return root;
 	}
 
-	public ArrayList<miniCard>  getListCardsPlayed(){
+	public ArrayList<MiniCard>  getListCardsPlayed(){
 		return cardsPlayed;
 	}
 
@@ -77,7 +78,7 @@ public class GUIGame {
 		List<JSONObject> JSONCardsPlayed = turn.getGame().getBoard().getPlayedCards();
 		for(int i = 0; i< JSONCardsPlayed.size(); i++){
 			JSONObject card = JSONCardsPlayed.get(i);
-			miniCard m = new miniCard(card,this);
+			MiniCard m = new MiniCard(card,this);
 			getListCardsPlayed().add(m);
 		}
 		getPlayZone().getCarousel().setCarouselMini(getPlayZone().getPlayZone(),getListCardsPlayed());
@@ -107,7 +108,6 @@ public class GUIGame {
 
 	private void setHand(){
 		playerbalk.getActionButton().setHand(hand);
-		playerbalk.getPlayButton().setHand(hand);
 	}
 
 	private VBox createGameZone(){

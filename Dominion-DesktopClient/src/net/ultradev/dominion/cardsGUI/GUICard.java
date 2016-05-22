@@ -1,4 +1,4 @@
-package net.ultradev.dominion.gameGUI;
+package net.ultradev.dominion.cardsGUI;
 
 
 
@@ -14,6 +14,8 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import net.sf.json.JSONObject;
 import net.ultradev.dominion.game.card.Card;
+import net.ultradev.dominion.gameGUI.CardSet;
+import net.ultradev.dominion.gameGUI.Hand;
 
 public class GUICard {
 	private VBox cardBox;
@@ -42,6 +44,7 @@ public class GUICard {
 
 	}
 
+	//LEGE kaart
 	public GUICard(){
 		cardBox = new VBox();
 		ImageView iv = createImg(new Image("File:Images/Card_back.jpg"),220,310);
@@ -49,6 +52,7 @@ public class GUICard {
 
 	}
 
+	//Kaart appart scherm
 	public GUICard(JSONObject card){
 		title = card.getString("name");
 		type = card.getString("type").toLowerCase();
@@ -114,7 +118,7 @@ public class GUICard {
 	private VBox createVBox(int width){
 		VBox vbox = new VBox();
 		vbox.setId(type);
-		if(type.contains("-")){
+		if(type.contains("action -")){
 			vbox.setId("action");
 		}
 
@@ -212,42 +216,35 @@ public class GUICard {
 			{
 				parent.getParent().getCardSet().removeBorder();
 			}
+			if(parent.getParent().getTurn().getPhase().toString().equals("BUY")){
+				parent.getParent().getPlayerbalk().getActionButton().getButton().setText("PLAY CARD");
+			}
 		}
+
 	}
 
 	public void playCard(){
-
 		//Kaart spelen en response verzenden naar button
 
 		JSONObject response = parent.getParent().getTurn().playCard(title);
-		//System.out.println(response);
 		if(response.getString("response").equals("OK")){
 			removeCardGUI();
 			if(!response.getString("result").equals("DONE")){
 				parent.getParent().getPlayerbalk().getActionButton().setAction(response);
-				parent.getParent().getPlayerbalk().getStopActionButton().setActive(true);
+				parent.getParent().getPlayerbalk().getPhaseButton().changeButtonText("STOP ACTION");
+
 			}
-
 		}
-
 	}
 
 	public void removeCardGUI(){
 		parent.getCards().remove(this);
 		parent.reloadCards(false);
 		parent.setActiveGCard(null);
-
 		if(!parent.getIfSelectionScreen()){
 			parent.getParent().getTopMenu().reloadCounters();
 			parent.getParent().loadCardsPlayed();
 		}
-
 	}
-
-
-
-
-
-
 }
 

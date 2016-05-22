@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import net.ulradev.dominion.EventHandlers.ActionButtonEventHandler;
+import net.ultradev.dominion.Buttons.ActionButton;
+import net.ultradev.dominion.Buttons.PhaseButton;
 import net.ultradev.dominion.game.Turn;
 import net.ultradev.dominion.game.player.Player;
 
@@ -21,10 +23,10 @@ public class PlayerBalk {
 	private Circle[] circlePhases;
 	private GUIGame parent;
 
-	private CustomButton nextPhase;
-	private CustomButton playButton;
-	private CustomButton actionButton;
-	private CustomButton StopActionButton;
+	private PhaseButton phaseButton;
+
+	private ActionButton actionButton;
+
 
 
 
@@ -46,15 +48,13 @@ public class PlayerBalk {
 		return playerBalk;
 	}
 
-	public CustomButton getPlayButton(){
-		return playButton;
-	}
-	public CustomButton getActionButton(){
+
+	public ActionButton getActionButton(){
 		return actionButton;
 	}
 
-	public CustomButton getStopActionButton(){
-		return StopActionButton;
+	public PhaseButton getPhaseButton(){
+		return phaseButton;
 	}
 
 	public void changeCircle(int index){
@@ -84,12 +84,11 @@ public class PlayerBalk {
 		right.setMaxWidth(widthright);
 		right.setMinWidth(widthright);
 
-		StopActionButton = new CustomButton("stopAction",this);
-		actionButton = new CustomButton("action",this);
-		playButton = new CustomButton("play",this);
-		nextPhase = new CustomButton("phase",this);
 
-		right.getChildren().addAll(StopActionButton.getButton(),actionButton.getButton(),playButton.getButton(),nextPhase.getButton());
+		actionButton = new ActionButton(this);
+		phaseButton = new PhaseButton(this);
+
+		right.getChildren().addAll(actionButton.getButton(),phaseButton.getButton());
 		playerBalk.getChildren().addAll(left,right);
 	}
 

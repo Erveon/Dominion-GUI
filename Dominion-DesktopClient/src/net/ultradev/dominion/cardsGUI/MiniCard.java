@@ -1,4 +1,4 @@
-package net.ultradev.dominion.gameGUI;
+package net.ultradev.dominion.cardsGUI;
 
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -8,8 +8,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import net.sf.json.JSONObject;
+import net.ultradev.dominion.gameGUI.GUIGame;
 
-public class miniCard {
+public class MiniCard {
 
 	private JSONObject Jcard;
 	private GUIGame parent;
@@ -21,7 +22,7 @@ public class miniCard {
 
 
 
-	public miniCard(JSONObject card, GUIGame parent){
+	public MiniCard(JSONObject card, GUIGame parent){
 		this.parent = parent;
 		Jcard = card;
 		this.title = card.getString("name");
@@ -58,7 +59,12 @@ public class miniCard {
 		VBox vbox = new VBox();
 		vbox.setMinHeight(100);
 		vbox.setMaxHeight(120);
-		vbox.setId(type);
+
+		if(type.contains("action -")){
+			vbox.setId("action");
+		}else{
+			vbox.setId(type);
+		}
 		vbox.setFillWidth(true);
 		vbox.setPrefWidth(width);
 

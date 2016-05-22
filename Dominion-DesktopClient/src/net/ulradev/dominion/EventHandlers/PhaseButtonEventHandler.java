@@ -2,20 +2,33 @@ package net.ulradev.dominion.EventHandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import net.sf.json.JSONObject;
 import net.ultradev.dominion.DominionGUIMain;
-import net.ultradev.dominion.PlayerConfirm;
+import net.ultradev.dominion.Buttons.ActionButton;
+import net.ultradev.dominion.Buttons.PhaseButton;
+import net.ultradev.dominion.cardsGUI.GUICard;
 import net.ultradev.dominion.game.Turn;
+import net.ultradev.dominion.game.card.action.Action;
 import net.ultradev.dominion.gameGUI.*;
+import net.ultradev.dominion.specialScreens.PlayerConfirm;
 
 public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
-	private CustomButton parent;
+	private PhaseButton parent;
 
-
-	public PhaseButtonEventHandler(CustomButton parent){
-		this.parent = parent;
+	public PhaseButtonEventHandler(PhaseButton phaseButton){
+		this.parent = phaseButton;
 	}
 	@Override
     public void handle(ActionEvent event) {
+		if(parent.getParent().getParent().getTurn().getActiveAction() == null){
+			changePhase();
+		}
+		else{
+			stopAction();
+		}
+    }
+
+	private void changePhase(){
 		GUIGame game = parent.getParent().getParent();
 		Turn turn = game.getTurn();
     	switch(turn.getPhase().toString()){
@@ -28,23 +41,33 @@ public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
     			turn.endPhase();
     			changePhaseGUI(1,"END TURN");
     			loadHand(game);
-    			parent.getParent().getPlayButton().setActive(false);
+    			parent.getParent().getActionButton().setActive(false);
     			break;
     		case "CLEANUP":
     			goToNextPlayer(game);
     			break;
     	}
-    }
+	}
+
+	private void stopAction(){
+		Action action = parent.getParent().getParent().getTurn().getActiveAction();
+		if(action != null){
+			parent.getParent().getParent().getTurn().stopAction();
+			parent.getParent().getActionButton().setAction(new JSONObject().accumulate("response", "OK").accumulate("result", "DONE"));
+			parent.getParent().getActionButton().setActive(false);
+			parent.changeButtonText("GO TO TREASURE PHASE");
+		}
+	}
 
 	private void checkCardsPhase(){
 		GUICard card= parent.getParent().getParent().getHand().getSelectedCard();
 		Turn turn = parent.getParent().getParent().getTurn();
-		CustomButton playbtn = parent.getParent().getPlayButton();
+		ActionButton actionBtn = parent.getParent().getActionButton();
 		if(card != null){
-			playbtn.setActive(turn.canPlay(turn.getPhase(), card.getTitle()));
+			actionBtn.setActive(turn.canPlay(turn.getPhase(), card.getTitle()));
 		}
 		else{
-			playbtn.setActive(false);
+			actionBtn.setActive(false);
 		}
 
 	}

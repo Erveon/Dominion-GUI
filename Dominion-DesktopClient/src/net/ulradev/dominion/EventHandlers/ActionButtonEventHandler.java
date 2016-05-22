@@ -4,74 +4,100 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import net.sf.json.JSONObject;
 import net.ultradev.dominion.DominionGUIMain;
-import net.ultradev.dominion.PlayerConfirm;
+import net.ultradev.dominion.Buttons.ActionButton;
+import net.ultradev.dominion.cardsGUI.GUICard;
+import net.ultradev.dominion.cardsGUI.KingdomCard;
 import net.ultradev.dominion.game.Turn;
 import net.ultradev.dominion.game.card.Card;
 import net.ultradev.dominion.game.card.action.Action;
 import net.ultradev.dominion.gameGUI.CardSet;
-import net.ultradev.dominion.gameGUI.CustomButton;
-import net.ultradev.dominion.gameGUI.GUICard;
+import net.ultradev.dominion.gameGUI.GUIGame;
 import net.ultradev.dominion.gameGUI.Hand;
-import net.ultradev.dominion.gameGUI.KingdomCard;
+import net.ultradev.dominion.specialScreens.PlayerConfirm;
 
 public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
-	private boolean actionActive;
-	private JSONObject response;
-	private Action action;
 	private Turn turn;
+	private JSONObject response;
 
+	private ActionButton parent;
 
-	private CustomButton parent;
-
-	public ActionButtonEventHandler(CustomButton parent , Turn turn){
+	public ActionButtonEventHandler(ActionButton parent , Turn turn){
 		this.parent = parent;
 		this.turn = turn;
 	}
 
 	@Override
 	public void handle(ActionEvent event){
-		Hand hand = parent.getHand();
+		//Hand hand = parent.getHand();
 
-		//TODO: Militia invoeren + kader kingdomkaarten aanpassen
-		if(checkInPlayerBalk()){
-			//Nog opvangen als er geen karten geselecteerd zijn
-			CardSet cardset = parent.getParent().getParent().getCardSet();
-			if(response.getString("result").equals("DONE")){
-				parent.setActive(false);
+		if(turn.getPhase().toString().equals("ACTION")){
+			if(parent.getParent() != null){
+				doAction();
 			}
 			else{
-				if(response.getString("player").equals(turn.getPlayer().getDisplayname())){
-					selectCard(cardset,hand);
-				}else{
-					parent.getParent().getParent().getCardViewer().close();
-					goToNextPlayer();
-				}
+				selectionAction();
 			}
+			parent.changeButtonText(response);
 		}
-		else{
-			if(!response.getString("result").equals("DONE")){
-				if(response.getString("player").equals(parent.getHand().getPlayer().getDisplayname())){
+		if(turn.getPhase().toString().equals("BUY")){
+			buyCard();
+		}
 
-					selectCardHand(hand);
-				}else{
-					parent.getButton().setText("NEXT PLAYER");
-					goToNextPlayer();
-				}
+
+	}
+
+	public void setAction(JSONObject response){
+		this.response = response;
+	}
+
+	private void doAction(){
+			if(response.getString("result").equals("DONE")){
+				parent.getHand().getSelectedCard().playCard();
+			}
+			if(response.getString("player").equals(parent.getHand().getPlayer().getDisplayname())){
+				Hand hand = parent.getHand();
+				CardSet cardset = parent.getParent().getParent().getCardSet();
+				selectCard(cardset,hand);
 
 			}else{
-				PlayerConfirm playerConfirm = new PlayerConfirm(turn.getGame(),true);
-		    	DominionGUIMain.setRoot(playerConfirm.getRoot());
+				parent.getParent().getParent().getCardViewer().close();
+				goToNextPlayer();
+			}
+	}
+
+	private void selectionAction(){
+
+		if(response.getString("result").equals("DONE")){
+			PlayerConfirm playerConfirm = new PlayerConfirm(turn.getGame(),true);
+	    	DominionGUIMain.setRoot(playerConfirm.getRoot());
+		}else
+		{
+			if(response.getString("player").equals(parent.getHand().getPlayer().getDisplayname())){
+				selectCardHand(parent.getHand());
+			}
+			else{
+				if(response.getString("result").equals("DONE")){
+					PlayerConfirm playerConfirm = new PlayerConfirm(turn.getGame(),response);
+					DominionGUIMain.setRoot(playerConfirm.getRoot());
+				}else
+				{
+					goToNextPlayer();
+				}
 			}
 		}
-
-		parent.changeButtonText(response);
-		System.out.println("(ActionButtonEventHandler) response: "+ response);
 	}
 
-	private boolean checkInPlayerBalk(){
-		return (parent.getParent() != null);
-	}
+	private void buyCard(){
+		GUIGame game = parent.getParent().getParent();
+		if(game.getHand().getSelectedCard() != null){
+			//Om treasures te spelen
+			game.getHand().getSelectedCard().playCard();
+		}
 
+		if(game.getCardSet().getSelectedKingdomCard() != null){
+			game.getCardSet().getSelectedKingdomCard().buyCard();
+		}
+	}
 
 	private void selectCard(CardSet cardset, Hand hand){
 		selectKingdomCard(cardset);
@@ -79,11 +105,12 @@ public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
 	}
 
 	private void selectCardHand(Hand hand){
-		GUICard handCard = hand.getSelectedCard();
-		if(handCard != null){
-			response = action.selectCard(turn, handCard.getSourceCard());
+		GUICard cardHand = hand.getSelectedCard();
+		if(cardHand != null){
+			JSONObject response = turn.getActiveAction().selectCard(turn, cardHand.getSourceCard());
 			if(response.get("response").equals("OK") ){
 				hand.getSelectedCard().removeCardGUI();
+				setAction(response);
 			}
 		}
 	}
@@ -91,7 +118,7 @@ public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
 	private void selectKingdomCard(CardSet cardset){
 		KingdomCard kingdomCard = cardset.getSelectedKingdomCard();
 		if(kingdomCard != null ){
-			response = action.selectCard(turn, kingdomCard.getSourceCard());
+			JSONObject response = turn.getActiveAction().selectCard(turn, kingdomCard.getSourceCard());
 			if(response.get("response").equals("OK") ){
 				cardset.getSelectedKingdomCard().decreaseAmount();
 			}
@@ -101,12 +128,8 @@ public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
 	private void goToNextPlayer(){
 			PlayerConfirm playerConfirm = new PlayerConfirm(turn.getGame(),response);
 	    	DominionGUIMain.setRoot(playerConfirm.getRoot());
-
 	}
 
-	public void setAction(JSONObject response){
-		this.response = response;
-		action = turn.getActiveAction();
-	}
+
 
 }

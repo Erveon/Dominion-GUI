@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import net.ultradev.dominion.DominionGUIMain;
+import net.ultradev.dominion.cardsGUI.GUICard;
 
 public class ExternalCardViewer extends Stage {
 	private int height = 357;

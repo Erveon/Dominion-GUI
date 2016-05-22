@@ -2,14 +2,14 @@ package net.ulradev.dominion.EventHandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;import net.sf.json.JSONObject;
+import net.ultradev.dominion.Buttons.ActionButton;
 import net.ultradev.dominion.game.card.action.Action;
-import net.ultradev.dominion.gameGUI.CustomButton;
 import net.ultradev.dominion.gameGUI.GUIGame;
 
 public class StopActionButtonEventHandler implements EventHandler<ActionEvent>  {
-	private CustomButton parent;
+	private ActionButton parent;
 
-	public StopActionButtonEventHandler(CustomButton parent){
+	public StopActionButtonEventHandler(ActionButton parent){
 		this.parent = parent;
 	}
 
