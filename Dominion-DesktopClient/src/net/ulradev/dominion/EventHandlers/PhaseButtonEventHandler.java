@@ -2,6 +2,7 @@ package net.ulradev.dominion.EventHandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.ultradev.dominion.DominionGUIMain;
 import net.ultradev.dominion.Buttons.ActionButton;
@@ -11,6 +12,7 @@ import net.ultradev.dominion.game.Turn;
 import net.ultradev.dominion.game.card.action.Action;
 import net.ultradev.dominion.gameGUI.*;
 import net.ultradev.dominion.specialScreens.PlayerConfirm;
+import net.ultradev.dominion.specialScreens.VictoryScreen;
 
 public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
 	private PhaseButton parent;
@@ -32,8 +34,8 @@ public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
 		GUIGame game = parent.getParent().getParent();
 		Turn turn = game.getTurn();
     	switch(turn.getPhase().toString()){
-    		case "ACTION":
-    			turn.endPhase();
+    	  	case "ACTION":
+    	  		turn.getGame().endPhase();
     			changePhaseGUI(0,"GO TO CLEAN-UP PHASE");
     			checkCardsPhase();
     			break;
@@ -44,16 +46,37 @@ public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
     			parent.getParent().getActionButton().setActive(false);
     			break;
     		case "CLEANUP":
-    			goToNextPlayer(game);
+    			JSONObject response = turn.getGame().endPhase();
+    			//System.out.println("(PhaseEventhandler) response: " + response);
+    			try{
+    			if(response.getString("result").equals("GAMEOVER")){
+    				String nameWinner = response.getString("winner");
+    				JSONArray spelers  = response.getJSONArray("players");
+    				String points = getPoints(spelers, nameWinner);
+    				VictoryScreen screen = new VictoryScreen(nameWinner,points);
+    				DominionGUIMain.setRoot(screen.getRoot());
+    			}
+    			}catch(Exception e){
+    				goToNextPlayer(game);
+    			}
     			break;
     	}
 	}
-
+	private String getPoints(JSONArray lijstSpelers, String nameWinner){
+		String points = "";
+		for(int i = 0; i< lijstSpelers.size();i++){
+			JSONObject speler = lijstSpelers.getJSONObject(i);
+			if(speler.getString("displayname").equals(nameWinner)){
+				points = speler.getString("victorypoints");
+			}
+		}
+		return points;
+	}
 	private void stopAction(){
 		Action action = parent.getParent().getParent().getTurn().getActiveAction();
 		if(action != null){
 			parent.getParent().getParent().getTurn().stopAction();
-			parent.getParent().getActionButton().setAction(new JSONObject().accumulate("response", "OK").accumulate("result", "DONE"));
+			//parent.getParent().getActionButton().setAction(new JSONObject().accumulate("response", "OK").accumulate("result", "DONE"));
 			parent.getParent().getActionButton().setActive(false);
 			parent.changeButtonText("GO TO TREASURE PHASE");
 		}
@@ -85,7 +108,7 @@ public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
 
 	private void goToNextPlayer(GUIGame game){
 		game.getCardViewer().close();
-    	PlayerConfirm playerConfirm = new PlayerConfirm(game.getTurn().getGame(),false);
+    	PlayerConfirm playerConfirm = new PlayerConfirm(game.getTurn().getGame());
     	DominionGUIMain.setRoot(playerConfirm.getRoot());
 	}
 }

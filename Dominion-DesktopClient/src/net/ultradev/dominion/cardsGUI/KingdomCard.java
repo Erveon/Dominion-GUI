@@ -121,15 +121,7 @@ public class KingdomCard {
 	}
 
 	public void buyCard(){
-		try{
-		String response = parent.getParent().getTurn().buyCard(title).getString("result");
-		if(response.equals("BOUGHT"))		{
-			decreaseAmount();
-			parent.getParent().getTopMenu().reloadCounters();
-			parent.getParent().getPlayerbalk().getActionButton().setActive(false);
-		}}
-		catch(Exception e){
-		}
+		parent.getParent().getHand().getActionButton().buyCard();
 	}
 
 

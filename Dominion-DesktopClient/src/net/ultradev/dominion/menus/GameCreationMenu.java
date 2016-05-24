@@ -8,8 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import net.ultradev.domininion.GUIUtils.GUtils;
 import net.ultradev.dominion.DominionGUIMain;
@@ -64,14 +62,14 @@ public class GameCreationMenu {
                 for(int i=0;i<4;i++){
                 	if(!listInput[i].getText().equals(""))
                 	{
-                		localGame.addPlayer(listInput[i].getText());
+                		localGame.addPlayer(listInput[i].getText(),null);
                 	}
                 }
                 String chosenString = setlist.getValue();
                 localGame.getConfig().setCardset(chosenString);
                 localGame.start();
 
-                PlayerConfirm pc = new PlayerConfirm(localGame,true);
+                PlayerConfirm pc = new PlayerConfirm(localGame);
 
             	DominionGUIMain.setRoot(pc.getRoot());
 

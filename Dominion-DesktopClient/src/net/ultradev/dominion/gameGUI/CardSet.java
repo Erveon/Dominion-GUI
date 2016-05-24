@@ -8,6 +8,7 @@ import javafx.scene.text.Text;
 import net.sf.json.*;
 import net.ultradev.dominion.cardsGUI.KingdomCard;
 import net.ultradev.dominion.game.*;
+import net.ultradev.dominion.game.player.Player.Pile;
 
 public class CardSet {
 	private VBox cardset;
@@ -20,13 +21,15 @@ public class CardSet {
 	private Text countCardDeck;
 
 	private ArrayList<KingdomCard>  kingdomCards;
-
 	private KingdomCard selectedKingdomCard;
+
+	private int cost;
 
 	public CardSet(GUIGame parent ){
 		this.turn = parent.getTurn();
 		this.board = turn.getGame().getBoard();
 		this.parent = parent;
+		cost = turn.getBuypower();
 		kingdomCards = new ArrayList<KingdomCard>();
 		cardset = createCardSets();
 
@@ -46,9 +49,15 @@ public class CardSet {
 		return selectedKingdomCard;
 	}
 
+	public void setCost(int cost){
+		this.cost = cost;
+	}
+	public int getCost(){
+		return cost;
+	}
 	public void loadTrashAndDeck(){
 		countCardTrash.setText(String.valueOf(board.getAsJson().getJSONArray("trash").size()));
-		countCardDeck.setText(String.valueOf(parent.getPlayer().getDeck().size()));
+		countCardDeck.setText(String.valueOf(parent.getPlayer().getPile(Pile.DECK).size()));
 	}
 
 	public void removeBorder(){
@@ -62,7 +71,7 @@ public class CardSet {
 				selectedKingdomCard.getCard().setStyle("-fx-border-color: red; -fx-border-width: 4");
 			}
 		}else{
-			if(selectedKingdomCard.getCost() > turn.getBuypower() ){
+			if(selectedKingdomCard.getCost() > cost ){
 				selectedKingdomCard.getCard().setStyle("-fx-border-color: red; -fx-border-width: 4");
 				parent.getPlayerbalk().getActionButton().setActive(false);
 			}else{

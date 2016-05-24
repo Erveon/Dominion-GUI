@@ -10,6 +10,7 @@ import javafx.scene.text.Text;
 import net.ultradev.domininion.GUIUtils.GUtils;
 import net.ultradev.dominion.DominionGUIMain;
 import net.ultradev.dominion.game.Turn;
+import net.ultradev.dominion.game.player.Player.Pile;
 
 public class GameTopMenu {
 	private GUtils utils = new GUtils();
@@ -18,6 +19,7 @@ public class GameTopMenu {
 	private Text actionCounterText;
 	private Text buyCounterText;
 	private Text coinsText;
+	private Text handCounterText;
 	private GUIGame parent;
 
 	public GameTopMenu(Turn turn, GUIGame parent){
@@ -42,6 +44,7 @@ public class GameTopMenu {
 		actionCounterText.setText(Integer.toString(turn.getActions()));
 		coinsText.setText(Integer.toString(turn.getBuypower()));
 		buyCounterText.setText(Integer.toString(turn.getBuys()));
+		handCounterText.setText(Integer.toString(turn.getPlayer().getPile(Pile.HAND).size()));
 	}
 
 	private void createTopMenu(){
@@ -51,8 +54,6 @@ public class GameTopMenu {
 			HBox counterBox = createCounterBox();
 			topMenu.getChildren().addAll(titleBox, counterBox);
 		}
-
-
 
 		MenuBar menuBar = new MenuBar();
 		Menu menu = new Menu("Menu");
@@ -100,8 +101,9 @@ public class GameTopMenu {
 		VBox actionCounter = createCounter("ACTION",actionCounterText);
 		VBox buyCounter = createCounter("BUYS",buyCounterText);
 		VBox coinCounter = createCounter("COINS",coinsText);
+		VBox cardsHandCounter = createCounter("HAND",handCounterText);
 
-		counterBox.getChildren().addAll(actionCounter,buyCounter,coinCounter);
+		counterBox.getChildren().addAll(actionCounter,buyCounter,coinCounter,cardsHandCounter);
 		return counterBox;
 	}
 
@@ -123,9 +125,9 @@ public class GameTopMenu {
 		actionCounterText = createText(turn.getActions());
 		buyCounterText = createText(turn.getBuys());
 		coinsText = createText(turn.getBuypower());
-
-
+		handCounterText = createText(turn.getPlayer().getPile(Pile.HAND).size());
 	}
+
 	private Text createText(int number){
 		Text text = new Text();
 		text.setText(Integer.toString(number));

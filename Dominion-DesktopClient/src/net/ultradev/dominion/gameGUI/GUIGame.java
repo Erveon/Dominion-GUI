@@ -27,9 +27,9 @@ public class GUIGame {
 
 	private Player player;
 
-	public GUIGame(Turn turn, boolean newTurn, String player){
+	public GUIGame(Turn turn, boolean newTurn){
 		cardsPlayed = new ArrayList<MiniCard>();
-		this.player = turn.getGame().getPlayerByName(player);
+		this.player = turn.getPlayer();
 		this.turn = turn;
 		createGameGUI();
 		cardViewer = new ExternalCardViewer();

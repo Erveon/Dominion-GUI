@@ -6,9 +6,11 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.*;
 import net.ultradev.domininion.GUIUtils.Carousel;
 import net.ultradev.domininion.GUIUtils.GUtils;
+import net.ultradev.dominion.Buttons.ActionButton;
 import net.ultradev.dominion.cardsGUI.GUICard;
 import net.ultradev.dominion.game.card.Card;
 import net.ultradev.dominion.game.player.Player;
+import net.ultradev.dominion.game.player.Player.Pile;
 
 
 public class Hand {
@@ -25,19 +27,26 @@ public class Hand {
 	private Player player;
 	private boolean selectionScreen;
 
+	private ActionButton actionButton;
 
 
 	public Hand(GUIGame parent){
 		this.parent = parent;
 		player = parent.getPlayer();
 		selectionScreen = false;
+		actionButton = parent.getPlayerbalk().getActionButton();
 		createHand();
 	}
 
-	public Hand(Player player){
+	public Hand(Player player, ActionButton actionBtn){
 		this.player = player;
 		selectionScreen = true;
+		actionButton = actionBtn;
 		createHand();
+	}
+
+	public ActionButton getActionButton(){
+		return actionButton;
 	}
 
 	public boolean getIfSelectionScreen(){
@@ -96,7 +105,7 @@ public class Hand {
 	}
 
 	private void loadCards(){
-		List<Card> listCardsInHand = player.getHand();
+		List<Card> listCardsInHand = player.getPile(Pile.HAND);
 		addCards(0,listCardsInHand.size());
 		c = new Carousel();
 		c.setCarousel(this.getHand(), this.getCards());
@@ -107,9 +116,9 @@ public class Hand {
 		if(fullReload){
 			getCards().clear();
 		}
-		if(getCards().size() < player.getHand().size())
+		if(getCards().size() < player.getPile(Pile.HAND).size())
 		{	//TODO TESTEN
-			addCards(getCards().size(), player.getHand().size());
+			addCards(getCards().size(), player.getPile(Pile.HAND).size());
 		}
 		c.setCarousel(this.getHand(), this.getCards());
 
@@ -117,7 +126,7 @@ public class Hand {
 
 	private void addCards(int start, int finish){
 		for(int i = start; i < finish;i++){
-			GUICard card = new GUICard(player.getHand().get(i),this);
+			GUICard card = new GUICard(player.getPile(Pile.HAND).get(i),this);
 			cards.add(card);
 		}
 	}

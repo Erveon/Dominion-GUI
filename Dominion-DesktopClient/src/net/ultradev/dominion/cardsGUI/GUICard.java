@@ -38,7 +38,7 @@ public class GUICard {
 
 		this.cardDesription = card.getDescription();
 		this.cost = card.getCost();
-		this.img = new Image("File:Images/copper.jpg");
+		this.img = new Image("File:Images/cards/" + title.toLowerCase() +".jpg");
 		showCard = false;
 		createCard();
 
@@ -58,7 +58,7 @@ public class GUICard {
 		type = card.getString("type").toLowerCase();
 		cardDesription = card.getString("description");
 		cost = card.getInt("cost");
-		this.img = new Image("File:Images/copper.jpg");
+		this.img = new Image("File:Images/cards/" + title.toLowerCase() +".jpg");
 		showCard = true;
 		createCard();
 
@@ -102,8 +102,10 @@ public class GUICard {
 				@Override
 				public void handle(MouseEvent mouseEvent) {
 					if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-						if(checkActive() && !parent.getIfSelectionScreen()){
-							playCard();
+						if(checkActive() ){
+							if(parent.getParent() != null){
+							parent.getActionButton().playCard();
+							}
 						}
 						else{
 							selectCard();
@@ -223,19 +225,7 @@ public class GUICard {
 
 	}
 
-	public void playCard(){
-		//Kaart spelen en response verzenden naar button
 
-		JSONObject response = parent.getParent().getTurn().playCard(title);
-		if(response.getString("response").equals("OK")){
-			removeCardGUI();
-			if(!response.getString("result").equals("DONE")){
-				parent.getParent().getPlayerbalk().getActionButton().setAction(response);
-				parent.getParent().getPlayerbalk().getPhaseButton().changeButtonText("STOP ACTION");
-
-			}
-		}
-	}
 
 	public void removeCardGUI(){
 		parent.getCards().remove(this);

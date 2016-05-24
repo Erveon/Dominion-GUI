@@ -27,7 +27,7 @@ public class MiniCard {
 		Jcard = card;
 		this.title = card.getString("name");
 		this.type = card.getString("type").toLowerCase();
-		this.img = new Image("File:Images/copper.jpg");
+		this.img = new Image("File:Images/cards/" + title.toLowerCase() +".jpg");
 		createMiniCard();
 
 	}
@@ -39,11 +39,11 @@ public class MiniCard {
 
 
 	private void createMiniCard(){
-		int width = 110;
+		int width = 120;
 		int height = 60;
 		card = createVBox(type,width);
 		VBox titleBox = createTitle(40);
-		ImageView iv = createImg(img,110,height);
+		ImageView iv = createImg(img,width,height);
 		card.getChildren().addAll(titleBox,iv);
 		card.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			@Override

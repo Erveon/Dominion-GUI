@@ -23,18 +23,15 @@ public class PlayerConfirm {
 		private Button readyBtn;
 
 
-		public PlayerConfirm(Game game, boolean sameTurn){
+		public PlayerConfirm(Game game){
 			this.localGame = game;
-			if(!sameTurn){
-				game.endTurn();
-			}
 			String playername = localGame.getTurn().getPlayer().getDisplayname();
 			createScreen(playername);
 
 			readyBtn.setOnAction(new EventHandler<ActionEvent>() {
 	            @Override
 	            public void handle(ActionEvent event) {
-	            	GUIGame game = new GUIGame(localGame.getTurn(),false,playername);
+	            	GUIGame game = new GUIGame(localGame.getTurn(),false);
 	             	DominionGUIMain.setRoot(game.getRoot());
 	            }
 	        });

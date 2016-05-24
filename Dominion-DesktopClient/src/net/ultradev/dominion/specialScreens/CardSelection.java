@@ -45,7 +45,7 @@ public class CardSelection {
 		center.getChildren().addAll(actionButton.getButton());
 		root.setCenter(center);
 
-		hand = new Hand(player);
+		hand = new Hand(player, actionButton);
 
 		root.setBottom(hand.getHand());
 		actionButton.setHand(hand);

@@ -136,3 +136,12 @@ Text{
 .creationMenuLabel{
 	-fx-fill:gold;
 }
+
+#gameover{
+	-fx-fill: rgb(192,57,43);
+	-fx-font: 100 RobotoBold;
+}
+#winner{
+	-fx-font: 40 RobotoBold;
+	-fx-fill: gold;
+}
