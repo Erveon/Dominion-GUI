@@ -56,6 +56,7 @@ Text{
 #countCard{
 	-fx-fill:rgb(231,76,60);
 }
+
 #deck, #discard{
 	-fx-background-color: rgb(41,128,185);
 }
@@ -81,9 +82,7 @@ Text{
 }
 #action{
 	-fx-background-color:rgb(127, 140, 141);
-
 }
-
 
 #playerbalk{
 	-fx-background-color:rgb(192,57,43);
