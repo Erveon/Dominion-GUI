@@ -16,6 +16,7 @@ import net.ultradev.dominion.specialScreens.VictoryScreen;
 
 public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
 	private PhaseButton parent;
+	private boolean mayStop;
 
 	public PhaseButtonEventHandler(PhaseButton phaseButton){
 		this.parent = phaseButton;
@@ -42,7 +43,8 @@ public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
     		case "BUY":
     			turn.endPhase();
     			changePhaseGUI(1,"END TURN");
-    			loadHand(game);
+
+    			loadGame(game);
     			parent.getParent().getActionButton().setActive(false);
     			break;
     		case "CLEANUP":
@@ -74,9 +76,8 @@ public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
 	}
 	private void stopAction(){
 		Action action = parent.getParent().getParent().getTurn().getActiveAction();
-		if(action != null){
+		if(action != null  && mayStop){
 			parent.getParent().getParent().getTurn().stopAction();
-			//parent.getParent().getActionButton().setAction(new JSONObject().accumulate("response", "OK").accumulate("result", "DONE"));
 			parent.getParent().getActionButton().setActive(false);
 			parent.changeButtonText("GO TO TREASURE PHASE");
 		}
@@ -100,7 +101,7 @@ public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
 		parent.getButton().setText(text);
 	}
 
-	private void loadHand(GUIGame game){
+	private void loadGame(GUIGame game){
 		game.getHand().reloadCards(true);
 		game.loadCardsPlayed();
 		game.getCardSet().loadRows();
@@ -110,5 +111,9 @@ public class PhaseButtonEventHandler implements EventHandler<ActionEvent>{
 		game.getCardViewer().close();
     	PlayerConfirm playerConfirm = new PlayerConfirm(game.getTurn().getGame());
     	DominionGUIMain.setRoot(playerConfirm.getRoot());
+	}
+
+	public void setMayStop(boolean b){
+		mayStop = b;
 	}
 }

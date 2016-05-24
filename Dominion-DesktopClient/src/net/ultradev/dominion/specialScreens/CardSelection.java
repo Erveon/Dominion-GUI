@@ -4,7 +4,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+
 import net.sf.json.JSONObject;
 import net.ultradev.dominion.Buttons.ActionButton;
 import net.ultradev.dominion.game.Turn;

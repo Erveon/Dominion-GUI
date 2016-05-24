@@ -8,9 +8,6 @@ import net.ultradev.dominion.Buttons.ActionButton;
 import net.ultradev.dominion.cardsGUI.GUICard;
 import net.ultradev.dominion.cardsGUI.KingdomCard;
 import net.ultradev.dominion.game.Turn;
-import net.ultradev.dominion.game.card.Card;
-import net.ultradev.dominion.game.card.action.Action;
-import net.ultradev.dominion.game.player.Player.Pile;
 import net.ultradev.dominion.gameGUI.CardSet;
 import net.ultradev.dominion.gameGUI.GUIGame;
 import net.ultradev.dominion.gameGUI.Hand;
@@ -30,13 +27,9 @@ public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
 
 	@Override
 	public void handle(ActionEvent event){
-		//Hand hand = parent.getHand();
-		//System.out.println(turn.getPlayer().getPile(Pile.HAND).size());
 		if(turn.getPhase().toString().equals("ACTION")){
-				doAction();
-			System.out.println("(ActionEventHandler) Response: " + response);
+			doAction();
 			parent.changeButtonText(response);
-
 		}
 		if(turn.getPhase().toString().equals("BUY")){
 			doBuyPhaseActions();
@@ -48,43 +41,34 @@ public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
 	}
 
 	private void doAction(){
-		System.out.println("before action: " + response);
 		if(turn.getActiveAction() == null ){
 			playCard();
 		}else{
 			switch(response.getString("result")){
 				case "DONE":
-					if(parent.getParent() == null){
+					if(inSelectionScreen()){
 						PlayerConfirm playerConfirm = new PlayerConfirm(turn.getGame());
 			    		DominionGUIMain.setRoot(playerConfirm.getRoot());
 					}
 					else{
 						turn.getActiveAction().finish(turn);
-						parent.getParent().getParent().getTopMenu().reloadCounters();
-						parent.getHand().reloadCards(false);
-						parent.getParent().getParent().getCardSet().loadTrashAndDeck();
+						reloadGame();
 					}
 		    		break;
 				case "REVEAL":
+					closeCardViewer();
 					RevealedCards tmpScreen = new RevealedCards(response, turn);
 					DominionGUIMain.setRoot(tmpScreen.getRoot());
 					break;
+				case "SELECT_CARD_BOARD":
+					CardSet cardset = parent.getParent().getParent().getCardSet();
+					selectKingdomCard(cardset);
+					break;
 				default:
 					if(response.getString("player").equals(parent.getHand().getPlayer().getDisplayname())){
-						Hand hand = parent.getHand();
-						if(parent.getParent() != null){
-							CardSet cardset = parent.getParent().getParent().getCardSet();
-							selectCard(cardset,hand);
-						}
-						else{
-							selectCardHand(parent.getHand());
-						}
-
+						selectCardHand(parent.getHand());
 					}else{
-						if(parent.getParent() != null)
-						{
-							parent.getParent().getParent().getCardViewer().close();
-						}
+						closeCardViewer();
 						goToNextPlayer(response.getString("player"));
 					}
 				}
@@ -93,20 +77,28 @@ public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
 
 	public void playCard(){
 		//Kaart spelen en response verzenden naar button
-
 		GUICard selectedCard = parent.getHand().getSelectedCard();
-			JSONObject newResponse = turn.playCard(selectedCard.getTitle());
+		JSONObject newResponse = turn.playCard(selectedCard.getTitle());
 			if(newResponse.getString("response").equals("OK")){
-				setAction(newResponse);
 				selectedCard.removeCardGUI();
-				parent.getParent().getParent().getCardSet().loadTrashAndDeck();
-				parent.getHand().reloadCards(false);
+				setAction(newResponse);
+				reloadGame();
 				if(!response.getString("result").equals("DONE")){
-					parent.getParent().getParent().getPlayerbalk().getActionButton().setAction(response);
-					parent.getParent().getParent().getPlayerbalk().getPhaseButton().changeButtonText("STOP ACTION");
+					if(response.getString("result").equals("SELECT_CARD_BOARD")){
+						parent.getParent().getParent().getCardSet().setCost(response.getInt("cost"));
+					}
+					parent.changeButtonText(newResponse);
+					if(newResponse.getInt("max") == 0){
+						parent.getParent().getParent().getPlayerbalk().getPhaseButton().mayStop(true);
+						parent.getParent().getParent().getPlayerbalk().getPhaseButton().changeButtonText("STOP ACTION");
+					}
+					else{
+						parent.getParent().getParent().getPlayerbalk().getPhaseButton().mayStop(false);
+					}
+
 				}
-				if(response.getString("result").equals("SELECT_CARD_BOARD")){
-					parent.getParent().getParent().getCardSet().setCost(response.getInt("cost"));
+				else{
+					parent.getParent().getParent().getCardSet().setCost(turn.getBuypower());
 				}
 			}
 
@@ -118,8 +110,7 @@ public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
 			String response = turn.buyCard(selectedCard.getTitle()).getString("result");
 			if(response.equals("BOUGHT"))		{
 				selectedCard.decreaseAmount();
-				parent.getParent().getParent().getTopMenu().reloadCounters();
-				parent.setActive(false);
+				reloadGame();
 			}}
 			catch(Exception e){
 			}
@@ -128,18 +119,11 @@ public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
 	private void doBuyPhaseActions(){
 		GUIGame game = parent.getParent().getParent();
 		if(game.getHand().getSelectedCard() != null){
-			//Om treasures te spelen
 			playCard();
 		}
-
 		if(game.getCardSet().getSelectedKingdomCard() != null){
-			game.getCardSet().getSelectedKingdomCard().buyCard();
+			buyCard();
 		}
-	}
-
-	private void selectCard(CardSet cardset, Hand hand){
-		selectKingdomCard(cardset);
-		selectCardHand(hand);
 	}
 
 	private void selectCardHand(Hand hand){
@@ -150,7 +134,6 @@ public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
 				hand.getSelectedCard().removeCardGUI();
 				setAction(newresponse);
 			}
-
 		}
 	}
 
@@ -176,6 +159,21 @@ public class ActionButtonEventHandler implements EventHandler<ActionEvent>{
 	    }
 	}
 
+	private void reloadGame(){
+		parent.getParent().getParent().getTopMenu().reloadCounters();
+		parent.getHand().reloadCards(false);
+		parent.getParent().getParent().getCardSet().loadTrashAndDeck();
+	}
 
+	private boolean inSelectionScreen(){
+		return parent.getParent() == null;
+	}
+
+	private void closeCardViewer(){
+		if(!inSelectionScreen())
+		{
+			parent.getParent().getParent().getCardViewer().close();
+		}
+	}
 
 }

@@ -117,7 +117,7 @@ public class Hand {
 			getCards().clear();
 		}
 		if(getCards().size() < player.getPile(Pile.HAND).size())
-		{	//TODO TESTEN
+		{
 			addCards(getCards().size(), player.getPile(Pile.HAND).size());
 		}
 		c.setCarousel(this.getHand(), this.getCards());

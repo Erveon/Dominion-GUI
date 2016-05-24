@@ -6,7 +6,6 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import net.ultradev.dominion.menus.GUIMainMenu;
-import net.ultradev.dominion.specialScreens.VictoryScreen;
 
 
 public class DominionGUIMain extends Application {

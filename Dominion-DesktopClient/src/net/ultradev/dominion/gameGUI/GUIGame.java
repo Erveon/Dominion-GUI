@@ -33,6 +33,9 @@ public class GUIGame {
 		this.turn = turn;
 		createGameGUI();
 		cardViewer = new ExternalCardViewer();
+		if(turn.getActiveAction()!= null){
+			turn.stopAction();
+		}
 	}
 
 	public Player getPlayer(){
