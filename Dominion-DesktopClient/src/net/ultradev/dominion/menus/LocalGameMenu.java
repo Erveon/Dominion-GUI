@@ -45,8 +45,8 @@ public class LocalGameMenu {
 
             }
         });
-		Button loadGame = utils.CreateButton("Load Game", width, height);
-		center.getChildren().addAll(newGame,loadGame);
+
+		center.getChildren().add(newGame);
 		root.setCenter(center);
 
 		HBox bottom = new HBox();

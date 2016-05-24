@@ -14,7 +14,6 @@ import net.ultradev.dominion.DominionGUIMain;
 public class GUIMainMenu {
 	private BorderPane root;
 	private Button localGameBtn;
-	private Button onlineGameBtn;
 	private GUtils utils = new GUtils();
 	public GUIMainMenu(){
 		createMainMenu();
@@ -45,16 +44,7 @@ public class GUIMainMenu {
             }
         });
 
-		onlineGameBtn = utils.CreateButton("Online Game",width,height);
-		onlineGameBtn.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-            	onlineGameBtn.setText("NOT AVAILABLE YET");
-            }
-        });
-
-		Button optionsBtn =  utils.CreateButton("Options",width,height);
-		center.getChildren().addAll(localGameBtn,onlineGameBtn,optionsBtn);
+		center.getChildren().add(localGameBtn);
 		root.setCenter(center);
 
 		HBox bottom = new HBox();
