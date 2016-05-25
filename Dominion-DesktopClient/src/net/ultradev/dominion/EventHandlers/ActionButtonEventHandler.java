@@ -1,4 +1,4 @@
-package net.ulradev.dominion.EventHandlers;
+package net.ultradev.dominion.EventHandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

@@ -27,7 +27,7 @@ public class MiniCard {
 		Jcard = card;
 		this.title = card.getString("name");
 		this.type = card.getString("type").toLowerCase();
-		this.img = new Image("File:Images/cards/" + title.toLowerCase() +".jpg");
+		this.img = new Image("/cards/" + title.toLowerCase() +".jpg");
 		createMiniCard();
 
 	}

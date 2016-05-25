@@ -3,8 +3,7 @@ package net.ultradev.dominion.Buttons;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-
-import net.ulradev.dominion.EventHandlers.*;
+import net.ultradev.dominion.EventHandlers.*;
 import net.ultradev.dominion.gameGUI.Hand;
 import net.ultradev.dominion.gameGUI.PlayerBalk;
 

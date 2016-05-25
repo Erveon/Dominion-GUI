@@ -17,7 +17,7 @@ public class DominionGUIMain extends Application {
 		int width = 1280;
 		stage = primaryStage;
 		stage.setTitle("Dominion");
-		stage.getIcons().add(new Image("file:Images/UltraDevLogo.png"));
+		stage.getIcons().add(new Image("/UltraDevLogo.png"));
 		stage.setMinHeight(height);
 		stage.setMinWidth(width);
 		stage.setHeight(height);

@@ -38,7 +38,7 @@ public class GUICard {
 
 		this.cardDesription = card.getDescription();
 		this.cost = card.getCost();
-		this.img = new Image("File:Images/cards/" + title.toLowerCase() +".jpg");
+		this.img = new Image("/cards/" + title.toLowerCase() +".jpg");
 		showCard = false;
 		createCard();
 
@@ -47,7 +47,7 @@ public class GUICard {
 	//LEGE kaart
 	public GUICard(){
 		cardBox = new VBox();
-		ImageView iv = createImg(new Image("File:Images/Card_back.jpg"),220,310);
+		ImageView iv = createImg(new Image("/Card_back.jpg"),220,310);
 		cardBox.getChildren().add(iv);
 
 	}
@@ -58,7 +58,7 @@ public class GUICard {
 		type = card.getString("type").toLowerCase();
 		cardDesription = card.getString("description");
 		cost = card.getInt("cost");
-		this.img = new Image("File:Images/cards/" + title.toLowerCase() +".jpg");
+		this.img = new Image("/cards/" + title.toLowerCase() +".jpg");
 		showCard = true;
 		createCard();
 

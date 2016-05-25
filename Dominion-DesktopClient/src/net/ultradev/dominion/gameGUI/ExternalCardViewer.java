@@ -14,7 +14,7 @@ public class ExternalCardViewer extends Stage {
 	public ExternalCardViewer(){
 
 		this.setTitle("Dominion Card Viewer");
-		this.getIcons().add(new Image("file:Images/UltraDevLogo.png"));
+		this.getIcons().add(new Image("/UltraDevLogo.png"));
 		this.setMinHeight(height);
 		this.setMinWidth(width);
 		this.setMaxHeight(height);

@@ -9,9 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import net.sf.json.JSONObject;
-import net.ultradev.domininion.GUIUtils.GUtils;
 import net.ultradev.dominion.DominionGUIMain;
-
+import net.ultradev.dominion.GUIUtils.GUtils;
 import net.ultradev.dominion.game.Game;
 
 import net.ultradev.dominion.gameGUI.GUIGame;

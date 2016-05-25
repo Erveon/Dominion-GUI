@@ -4,9 +4,9 @@ import java.util.*;
 
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
-import net.ultradev.domininion.GUIUtils.Carousel;
-import net.ultradev.domininion.GUIUtils.GUtils;
 import net.ultradev.dominion.Buttons.ActionButton;
+import net.ultradev.dominion.GUIUtils.Carousel;
+import net.ultradev.dominion.GUIUtils.GUtils;
 import net.ultradev.dominion.cardsGUI.GUICard;
 import net.ultradev.dominion.game.card.Card;
 import net.ultradev.dominion.game.player.Player;

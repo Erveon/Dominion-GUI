@@ -4,7 +4,7 @@ import java.util.*;
 
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
-import net.ultradev.domininion.GUIUtils.Carousel;
+import net.ultradev.dominion.GUIUtils.Carousel;
 import net.ultradev.dominion.cardsGUI.MiniCard;
 
 public class PlayZone {
